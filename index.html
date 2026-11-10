@@ -1,0 +1,539 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="referrer" content="strict-origin-when-cross-origin"><style>*,*::before,*::after{box-sizing:border-box}body{margin:0}</style></head><body><title>Adnan Rajeh Study</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;0,7..72,700;1,7..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Amiri:wght@400;700&display=swap">
+<style>
+/* Layout: a reading desk. Top bar with name + search, a thin section rail on the left on wide screens, content column on the right. Timestamps are the instrument of the page: mono, brass, always linking to the exact second on YouTube. */
+:root{
+  --bg:#f4f5f2; --surface:#ffffff; --fg:#1c2421; --muted:#5f6b67; --line:#d7ddd9; --accent:#0e6b5a; --accent-soft:#e3f0ec; --brass:#9a6a1c; --brass-soft:#f5ecd9; --hl:#fff1b8;
+  --display:'Literata', Georgia, 'Times New Roman', serif; --body:'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif; --mono:'IBM Plex Mono', Menlo, Consolas, monospace; --arabic:'Amiri', 'Scheherazade New', 'Noto Naskh Arabic', serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#0f1417; --surface:#161c21; --fg:#e4e8e5; --muted:#97a39d; --line:#2a333a; --accent:#58b9a0; --accent-soft:#16302a; --brass:#d8ab52; --brass-soft:#2b2415; --hl:#4a3f12; color-scheme:dark } }
+:root[data-theme="dark"]{ --bg:#0f1417; --surface:#161c21; --fg:#e4e8e5; --muted:#97a39d; --line:#2a333a; --accent:#58b9a0; --accent-soft:#16302a; --brass:#d8ab52; --brass-soft:#2b2415; --hl:#4a3f12; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5;margin:0;padding-block:0 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+button{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--display);font-weight:600;text-wrap:balance;margin:0}
+.ar{font-family:var(--arabic);direction:rtl;font-size:1.15em;line-height:1.6}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding-block:12px}
+.top h1{font-size:20px;line-height:1.2;white-space:nowrap}
+.top h1 a{color:var(--fg)}
+.top h1 small{display:block;font-family:var(--body);font-weight:400;font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.search{flex:1 1 320px;display:flex;gap:6px;min-width:0}
+.search input{flex:1;min-width:0;font:inherit;font-size:15px;padding:9px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg)}
+.search input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+.search button{padding:9px 14px;border:1px solid var(--accent);background:var(--accent);color:#fff;border-radius:6px;cursor:pointer;font-weight:500}
+.search button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+
+.shell{display:grid;grid-template-columns:200px minmax(0,1fr);gap:28px;max-width:1120px;margin-inline:auto;padding-top:20px}
+@media (max-width:860px){.shell{grid-template-columns:minmax(0,1fr);gap:14px}}
+.rail{position:sticky;top:calc(env(safe-area-inset-top,0px) + 74px);align-self:start;display:flex;flex-direction:column;gap:2px}
+@media (max-width:860px){.rail{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:4px;scrollbar-width:none}.rail::-webkit-scrollbar{display:none}}
+.rail a{display:flex;justify-content:space-between;gap:8px;padding:7px 10px;border-radius:6px;color:var(--fg);font-size:14px;white-space:nowrap}
+.rail a .n{color:var(--muted);font-family:var(--mono);font-size:12px}
+.rail a.on{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.rail a:hover{text-decoration:none;background:var(--accent-soft)}
+@media (max-width:860px){.rail a{border:1px solid var(--line);padding:6px 10px;font-size:13px}.rail a .n{display:none}}
+
+main{min-width:0}
+.hero{display:grid;gap:12px;margin-bottom:26px}
+.hero h2{font-size:30px;line-height:1.15}
+@media (max-width:600px){.hero h2{font-size:24px}}
+.hero p{max-width:62ch;margin:0;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:28px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:2px;color:var(--fg)}
+.tile:hover{text-decoration:none;border-color:var(--accent)}
+.tile b{font-family:var(--display);font-size:22px;font-weight:600}
+.tile span{font-size:13px;color:var(--muted)}
+.tile i{font-style:normal;font-size:12px;color:var(--muted);font-family:var(--mono)}
+
+section.block{margin-bottom:30px}
+.block h2{font-size:22px;margin-bottom:4px}
+.block h3{font-size:17px;margin:18px 0 8px}
+.lede{color:var(--muted);margin:0 0 12px;max-width:62ch}
+.serieslist{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.series{display:flex;justify-content:space-between;gap:10px;align-items:baseline;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+.series:hover{text-decoration:none;border-color:var(--accent)}
+.series .n{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+
+.list{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 14px;padding:10px 12px;background:var(--surface);color:var(--fg);align-items:baseline}
+.row:hover{text-decoration:none;background:var(--accent-soft)}
+.row .t{font-weight:500}
+.row .m{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap;text-align:right}
+.row .s{grid-column:1/-1;font-size:13px;color:var(--muted)}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted);margin-left:6px;vertical-align:middle;font-family:var(--body);font-weight:500}
+.tag.tx{border-color:var(--accent);color:var(--accent)}
+
+.video{display:grid;gap:18px}
+.video h2{font-size:26px}
+.video .meta{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--muted);font-size:14px}
+.player{position:sticky;top:var(--toph,74px);z-index:4;background:var(--bg);padding-block:6px;margin-inline:-2px}
+.player .frame{position:relative;width:min(100%,calc(40vh*16/9));aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000;box-shadow:0 1px 0 var(--line)}
+.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.player .pbar{display:flex;gap:14px;align-items:center;font-size:13px;color:var(--muted);margin-top:6px;flex-wrap:wrap}
+.player .pbar button{font:inherit;font-size:13px;background:none;border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:3px 9px;cursor:pointer}
+.player.mini .frame{width:min(100%,calc(18vh*16/9))}
+a.ts.on{background:var(--accent);color:#fff}
+.jump a.ts{display:none}
+.jump{cursor:pointer;border-radius:6px;transition:background .12s}
+.jump:hover{background:var(--accent-soft)}
+.jump.on{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
+.outline>div.jump{grid-template-columns:1fr}
+.watch{display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:8px;background:var(--accent);color:#fff;font-weight:500;width:fit-content;max-width:100%}
+.watch:hover{text-decoration:none;filter:brightness(1.08)}
+.watch .mono{opacity:.85;font-size:13px}
+.chapters{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.chapters a{display:grid;grid-template-columns:62px minmax(0,1fr);gap:10px;padding:8px 12px;background:var(--surface);color:var(--fg)}
+.chapters a:hover{background:var(--accent-soft);text-decoration:none}
+.ts{font-family:var(--mono);font-size:13px;color:var(--brass);font-variant-numeric:tabular-nums}
+.inline{display:flex;gap:6px}
+.inline input{flex:1;min-width:0;font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg)}
+.inline button{padding:8px 12px;border:1px solid var(--line);background:var(--surface);border-radius:6px;cursor:pointer}
+
+.results{display:grid;gap:14px}
+.hit{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:8px}
+.hit h3{font-size:16px;margin:0}
+.hit .sub{font-size:13px;color:var(--muted)}
+.moments{display:grid;gap:6px}
+.moment{display:grid;grid-template-columns:58px minmax(0,1fr);gap:10px;align-items:baseline;font-size:14px}
+.moment a{color:var(--fg)}
+.moment mark{background:var(--hl);color:inherit;padding:0 2px;border-radius:2px}
+.hit .more{font-size:13px}
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.filters button{font-size:13px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer}
+.filters button.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.status{color:var(--muted);font-size:13px;margin:8px 0}
+.empty{padding:28px;border:1px dashed var(--line);border-radius:8px;color:var(--muted);text-align:center}
+footer{max-width:1120px;margin:40px auto 0;color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:12px}
+/* topics */
+.domains{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.domain{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:8px;align-content:start}
+.domain h3{font-size:15px;margin:0}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{display:inline-flex;align-items:baseline;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--fg);font-size:13px;background:var(--bg)}
+.pill:hover{border-color:var(--accent);text-decoration:none;color:var(--accent)}
+.pill b{font-family:var(--mono);font-weight:500;font-size:11px;color:var(--muted)}
+.pill.big{font-size:15px;border-color:var(--accent);background:var(--accent-soft)}
+.topic h2{font-size:28px}
+.topic .lede{max-width:70ch}
+.prose{max-width:70ch;line-height:1.6}
+.prose p{margin:0 0 10px}
+.prose h4{font-family:var(--display);font-size:17px;margin:16px 0 6px}
+.verse{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--brass);border-radius:8px;padding:12px 14px;display:grid;gap:8px;margin-bottom:10px}
+.verse .ar{font-size:1.45em;line-height:1.9;text-align:right}
+.verse .en{max-width:70ch}
+.verse .ref{font-family:var(--mono);font-size:12px;color:var(--brass);display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
+.vlab{display:inline-flex;align-items:baseline;gap:8px;margin-right:8px;color:var(--brass)}
+.vlab .ar{font-size:17px;line-height:1.4;font-family:var(--arabic)}
+.vlab .mono{font-size:12px}
+.outline .vlab{display:flex;margin-bottom:2px}
+.surah-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;margin-bottom:6px}
+.surah-head .ar{font-size:34px;line-height:1.3;color:var(--fg)}
+.surah-head .sub{font-family:var(--mono);font-size:13px;color:var(--brass)}
+.verse .cites{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px}
+.narr{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+.narr div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px}
+.narr .src{font-size:12px;color:var(--muted);margin-top:4px}
+.maxims{display:flex;flex-wrap:wrap;gap:6px}
+.maxim{font-family:var(--display);font-style:italic;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+.lec{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;gap:6px;margin-bottom:8px}
+.lec .head{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.lec .head a{font-weight:500}
+.lec .head .m{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.span{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;font-size:14px;align-items:baseline}
+.span .ts{white-space:nowrap}
+.w3{border-left:3px solid var(--accent)}
+.outline{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.outline div{display:grid;grid-template-columns:110px minmax(0,1fr);gap:10px;padding:8px 12px;background:var(--surface);font-size:14px}
+.outline b{font-weight:500;display:block}
+.themelinks{display:flex;flex-wrap:wrap;gap:6px}
+.kv{display:grid;gap:4px;font-size:14px}
+details.sec{border-top:1px solid var(--line);padding:10px 0}
+details.sec summary{cursor:pointer;font-family:var(--display);font-size:17px;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.sec summary::-webkit-details-marker{display:none}
+details.sec summary::after{content:"+";color:var(--muted);font-family:var(--mono)}
+details.sec[open] summary::after{content:"\2212"}
+details.sec>div{padding-top:10px}
+@media (prefers-reduced-motion:no-preference){.row,.series,.tile{transition:border-color .15s,background .15s}}
+.synth h3.big{font-family:var(--display);font-size:22px;margin:4px 0 6px}
+.synth h4{font-family:var(--display);font-size:17px;margin:16px 0 6px}
+.pts{margin:0 0 6px;padding-left:20px;max-width:72ch;line-height:1.55}
+.pts li{margin:0 0 8px}
+.refs{display:inline;font-size:12.5px;color:var(--muted)}
+.refs .rg{white-space:nowrap;margin-right:10px}.refs .rg a.ts{margin-right:3px}
+a.vref{border-bottom:1px dotted var(--accent);text-decoration:none}
+.vx{margin:8px 0 4px;padding:8px 10px;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+.toc{display:flex;flex-direction:column;gap:4px;margin:6px 0 0;padding-left:18px}
+.toc a{color:inherit}
+.mm{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px 26px;margin:8px 0 26px}
+.mm svg.links{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+.mm svg.links line{stroke:var(--accent);stroke-opacity:.35;stroke-width:1.5}
+.mm .node{position:relative;z-index:1;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.mm .node h3{font-size:16px;margin:0 0 8px;color:var(--accent)}
+.mm .node ul{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:13.5px;line-height:1.4}
+.mm .node li a{color:var(--fg)}
+.mm .node li .k{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-left:4px}
+.mm .core{align-self:center;text-align:center;background:var(--accent-soft);border-color:var(--accent);padding:20px 16px}
+.mm .mid{grid-column:2}
+.mm .core h2{font-size:24px;margin:0 0 6px}
+.mm .core p{margin:2px 0;color:var(--muted);font-size:13px}
+.mm .empty-b{color:var(--muted);font-size:13px}
+@media (max-width:760px){.mm .mid{grid-column:auto}.mm{grid-template-columns:1fr;gap:12px;padding-left:14px;border-left:2px solid var(--accent-soft)}.mm svg.links{display:none}.mm .core{order:-1}}
+.facts h4{font-family:var(--display);font-size:17px;margin:16px 0 6px}
+.outline .side{opacity:.6}
+</style>
+
+<header class="top">
+  <h1><a href="#home">Adnan Rajeh<small>Study of his teaching</small></a></h1>
+  <form class="search" id="searchform" role="search">
+    <input id="q" type="search" placeholder="Search every lecture: istiqamah, incorruptibility, raising children…" aria-label="Search" autocomplete="off">
+    <button type="submit">Search</button>
+  </form>
+</header>
+
+<div class="shell">
+  <nav class="rail" id="rail" aria-label="Sections"></nav>
+  <main id="main"></main>
+</div>
+<footer id="foot"></footer>
+
+<script>
+(async function(){
+const $=s=>document.querySelector(s);
+const main=$('#main'), rail=$('#rail');
+const CATS=[
+ ['khutbah','Friday Khutbahs','Jummah sermons at the London Muslim Mosque. His own series and standalone sermons; guest khutbahs are listed separately.'],
+ ['series','Lecture Series','Multi-part series: Glorious Names of Allah, Attributes of the Prophet, Values of Islam, The Empty Space, Modern Awakening, Facing Disbelief, and more.'],
+ ['tazkiyah','Tazkiyah','Weekly spirituality halaqah: Self Honesty, Mortality, Self-Value, The Rituals, and the Tazkiyah Pearls series.'],
+ ['ramadan','Ramadan','Nightly Quranic Themes and Reflections, post-fajr dars, Stages of the Hereafter, and pre-Ramadan preparation, year by year.'],
+ ['tafseer','Tafseer','Sunday English tafseer surah by surah, A Juz A Day, surah summaries, and the Friday Arabic tafsir halaqah.'],
+ ['seerah','Seerah','Saturday seerah halaqah, episode by episode.'],
+ ['khaterah','Khaterahs','Short post-salah reminders, grouped into their series. Untitled ones sitting between two episodes of the same series are filed with that series.'],
+ ['other','Other Talks','Parenting talks, Hajj and Arafah programs, fiqh of fasting, community events.'],
+];
+const catOf=c=>c.cat.startsWith('ramadan')?'ramadan':c.cat;
+const STOP=new Set("a an and are as at be been but by for from has have he her his i if in into is it its of on or our so that the their them then there these they this to too us was we were what when where which who will with you your not no can do does did has had just also very more most much such than about after before over under again all any each few other some own same only both because while during out up down off than there here how why me my mine yours his hers ours theirs am being im ive youre theyre weve dont doesnt didnt cant couldnt wouldnt shouldnt isnt arent wasnt werent thats theres whats lets like get got going go come came one two three right okay ok yeah yes now say said says see know think thing things way well really actually even still back mean means kind sort little bit lot people person something anything nothing everything someone anyone everyone always never ever maybe let make made take took give gave want wanted need needed put keep kept look looked find found use used tell told ask asked call called try tried talk talked talking saying speak spoke show shown start started point part first second next last time times day days year years long good bad big small new old great important different same every many much number".split(' '));
+function toks(t){t=(t||'').toLowerCase().replace(/[’'`]/g,'').replace(/[\u064B-\u0652\u0670]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي');return (t.match(/[a-z0-9\u0600-\u06FF]+/g)||[]).filter(w=>w.length>=3&&!STOP.has(w))}
+async function md5bucket(term,NB){const buf=new TextEncoder().encode(term);try{const h=await crypto.subtle.digest('MD5',buf);return Number(BigInt('0x'+[...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join(''))%BigInt(NB))}catch(e){return null}}
+// MD5 is not available in WebCrypto; use a tiny md5 implementation instead.
+function md5(str){function R(n,c){return(n<<c)|(n>>>(32-c))}function A(x,y){const l=(x&0xFFFF)+(y&0xFFFF);return(((x>>16)+(y>>16)+(l>>16))<<16)|(l&0xFFFF)}function F(q,a,b,x,s,t){return A(R(A(A(a,q),A(x,t)),s),b)}function ff(a,b,c,d,x,s,t){return F((b&c)|((~b)&d),a,b,x,s,t)}function gg(a,b,c,d,x,s,t){return F((b&d)|(c&(~d)),a,b,x,s,t)}function hh(a,b,c,d,x,s,t){return F(b^c^d,a,b,x,s,t)}function ii(a,b,c,d,x,s,t){return F(c^(b|(~d)),a,b,x,s,t)}
+ const bytes=new TextEncoder().encode(str);const n=bytes.length;const words=[];for(let i=0;i<n;i++)words[i>>2]=(words[i>>2]||0)|(bytes[i]<<((i%4)*8));words[n>>2]=(words[n>>2]||0)|(0x80<<((n%4)*8));const len=(((n+8)>>6)+1)*16;const x=new Array(len).fill(0);for(let i=0;i<words.length;i++)x[i]=words[i]|0;x[len-2]=n*8;
+ let a=1732584193,b=-271733879,c=-1732584194,d=271733878;
+ for(let i=0;i<x.length;i+=16){const oa=a,ob=b,oc=c,od=d;
+ a=ff(a,b,c,d,x[i],7,-680876936);d=ff(d,a,b,c,x[i+1],12,-389564586);c=ff(c,d,a,b,x[i+2],17,606105819);b=ff(b,c,d,a,x[i+3],22,-1044525330);a=ff(a,b,c,d,x[i+4],7,-176418897);d=ff(d,a,b,c,x[i+5],12,1200080426);c=ff(c,d,a,b,x[i+6],17,-1473231341);b=ff(b,c,d,a,x[i+7],22,-45705983);a=ff(a,b,c,d,x[i+8],7,1770035416);d=ff(d,a,b,c,x[i+9],12,-1958414417);c=ff(c,d,a,b,x[i+10],17,-42063);b=ff(b,c,d,a,x[i+11],22,-1990404162);a=ff(a,b,c,d,x[i+12],7,1804603682);d=ff(d,a,b,c,x[i+13],12,-40341101);c=ff(c,d,a,b,x[i+14],17,-1502002290);b=ff(b,c,d,a,x[i+15],22,1236535329);
+ a=gg(a,b,c,d,x[i+1],5,-165796510);d=gg(d,a,b,c,x[i+6],9,-1069501632);c=gg(c,d,a,b,x[i+11],14,643717713);b=gg(b,c,d,a,x[i],20,-373897302);a=gg(a,b,c,d,x[i+5],5,-701558691);d=gg(d,a,b,c,x[i+10],9,38016083);c=gg(c,d,a,b,x[i+15],14,-660478335);b=gg(b,c,d,a,x[i+4],20,-405537848);a=gg(a,b,c,d,x[i+9],5,568446438);d=gg(d,a,b,c,x[i+14],9,-1019803690);c=gg(c,d,a,b,x[i+3],14,-187363961);b=gg(b,c,d,a,x[i+8],20,1163531501);a=gg(a,b,c,d,x[i+13],5,-1444681467);d=gg(d,a,b,c,x[i+2],9,-51403784);c=gg(c,d,a,b,x[i+7],14,1735328473);b=gg(b,c,d,a,x[i+12],20,-1926607734);
+ a=hh(a,b,c,d,x[i+5],4,-378558);d=hh(d,a,b,c,x[i+8],11,-2022574463);c=hh(c,d,a,b,x[i+11],16,1839030562);b=hh(b,c,d,a,x[i+14],23,-35309556);a=hh(a,b,c,d,x[i+1],4,-1530992060);d=hh(d,a,b,c,x[i+4],11,1272893353);c=hh(c,d,a,b,x[i+7],16,-155497632);b=hh(b,c,d,a,x[i+10],23,-1094730640);a=hh(a,b,c,d,x[i+13],4,681279174);d=hh(d,a,b,c,x[i],11,-358537222);c=hh(c,d,a,b,x[i+3],16,-722521979);b=hh(b,c,d,a,x[i+6],23,76029189);a=hh(a,b,c,d,x[i+9],4,-640364487);d=hh(d,a,b,c,x[i+12],11,-421815835);c=hh(c,d,a,b,x[i+15],16,530742520);b=hh(b,c,d,a,x[i+2],23,-995338651);
+ a=ii(a,b,c,d,x[i],6,-198630844);d=ii(d,a,b,c,x[i+7],10,1126891415);c=ii(c,d,a,b,x[i+14],15,-1416354905);b=ii(b,c,d,a,x[i+5],21,-57434055);a=ii(a,b,c,d,x[i+12],6,1700485571);d=ii(d,a,b,c,x[i+3],10,-1894986606);c=ii(c,d,a,b,x[i+10],15,-1051523);b=ii(b,c,d,a,x[i+1],21,-2054922799);a=ii(a,b,c,d,x[i+8],6,1873313359);d=ii(d,a,b,c,x[i+15],10,-30611744);c=ii(c,d,a,b,x[i+6],15,-1560198380);b=ii(b,c,d,a,x[i+13],21,1309151649);a=ii(a,b,c,d,x[i+4],6,-145523070);d=ii(d,a,b,c,x[i+11],10,-1120210379);c=ii(c,d,a,b,x[i+2],15,718787259);b=ii(b,c,d,a,x[i+9],21,-343485551);
+ a=A(a,oa);b=A(b,ob);c=A(c,oc);d=A(d,od)}
+ const hex=v=>{let s='';for(let i=0;i<4;i++)s+=((v>>(i*8))&255).toString(16).padStart(2,'0');return s};return hex(a)+hex(b)+hex(c)+hex(d)}
+const NB=24;const bucketOf=term=>Number(BigInt('0x'+md5(term))%BigInt(NB));
+
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtT=s=>{s=Math.max(0,Math.round(s||0));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?`${h}:${String(m).padStart(2,'0')}:${String(x).padStart(2,'0')}`:`${m}:${String(x).padStart(2,'0')}`};
+const fmtD=s=>{if(!s)return '';const h=Math.floor(s/3600),m=Math.round(s%3600/60);return h?`${h} h ${String(m).padStart(2,'0')}`:`${m} min`};
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmtDate=c=>{if(c.date){const [y,m,d]=c.date.split('-');return `${+d} ${MON[+m-1]} ${y}`}if(c.ad){const [y,m]=c.ad.split('-');return `~${MON[+m-1]} ${y}`}return ''};
+const isAr=s=>{s=s||'';const a=(s.match(/[\u0600-\u06FF]/g)||[]).length,l=(s.match(/[A-Za-z]/g)||[]).length;return a>l};
+const SAR=["", "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة", "الأنعام", "الأعراف", "الأنفال", "التوبة", "يونس", "هود", "يوسف", "الرعد", "ابراهيم", "الحجر", "النحل", "الإسراء", "الكهف", "مريم", "طه", "الأنبياء", "الحج", "المؤمنون", "النور", "الفرقان", "الشعراء", "النمل", "القصص", "العنكبوت", "الروم", "لقمان", "السجدة", "الأحزاب", "سبإ", "فاطر", "يس", "الصافات", "ص", "الزمر", "غافر", "فصلت", "الشورى", "الزخرف", "الدخان", "الجاثية", "الأحقاف", "محمد", "الفتح", "الحجرات", "ق", "الذاريات", "الطور", "النجم", "القمر", "الرحمن", "الواقعة", "الحديد", "المجادلة", "الحشر", "الممتحنة", "الصف", "الجمعة", "المنافقون", "التغابن", "الطلاق", "التحريم", "الملك", "القلم", "الحاقة", "المعارج", "نوح", "الجن", "المزمل", "المدثر", "القيامة", "الانسان", "المرسلات", "النبإ", "النازعات", "عبس", "التكوير", "الإنفطار", "المطففين", "الإنشقاق", "البروج", "الطارق", "الأعلى", "الغاشية", "الفجر", "البلد", "الشمس", "الليل", "الضحى", "الشرح", "التين", "العلق", "القدر", "البينة", "الزلزلة", "العاديات", "القارعة", "التكاثر", "العصر", "الهمزة", "الفيل", "قريش", "الماعون", "الكوثر", "الكافرون", "النصر", "المسد", "الإخلاص", "الفلق", "الناس"];
+const STR=["", "Al-Fatihah", "Al-Baqarah", "Ali 'Imran", "An-Nisa", "Al-Ma'idah", "Al-An'am", "Al-A'raf", "Al-Anfal", "At-Tawbah", "Yunus", "Hud", "Yusuf", "Ar-Ra'd", "Ibrahim", "Al-Hijr", "An-Nahl", "Al-Isra", "Al-Kahf", "Maryam", "Taha", "Al-Anbya", "Al-Hajj", "Al-Mu'minun", "An-Nur", "Al-Furqan", "Ash-Shu'ara", "An-Naml", "Al-Qasas", "Al-'Ankabut", "Ar-Rum", "Luqman", "As-Sajdah", "Al-Ahzab", "Saba", "Fatir", "Ya-Sin", "As-Saffat", "Sad", "Az-Zumar", "Ghafir", "Fussilat", "Ash-Shuraa", "Az-Zukhruf", "Ad-Dukhan", "Al-Jathiyah", "Al-Ahqaf", "Muhammad", "Al-Fath", "Al-Hujurat", "Qaf", "Adh-Dhariyat", "At-Tur", "An-Najm", "Al-Qamar", "Ar-Rahman", "Al-Waqi'ah", "Al-Hadid", "Al-Mujadila", "Al-Hashr", "Al-Mumtahanah", "As-Saf", "Al-Jumu'ah", "Al-Munafiqun", "At-Taghabun", "At-Talaq", "At-Tahrim", "Al-Mulk", "Al-Qalam", "Al-Haqqah", "Al-Ma'arij", "Nuh", "Al-Jinn", "Al-Muzzammil", "Al-Muddaththir", "Al-Qiyamah", "Al-Insan", "Al-Mursalat", "An-Naba", "An-Nazi'at", "'Abasa", "At-Takwir", "Al-Infitar", "Al-Mutaffifin", "Al-Inshiqaq", "Al-Buruj", "At-Tariq", "Al-A'la", "Al-Ghashiyah", "Al-Fajr", "Al-Balad", "Ash-Shams", "Al-Layl", "Ad-Duhaa", "Ash-Sharh", "At-Tin", "Al-'Alaq", "Al-Qadr", "Al-Bayyinah", "Az-Zalzalah", "Al-'Adiyat", "Al-Qari'ah", "At-Takathur", "Al-'Asr", "Al-Humazah", "Al-Fil", "Quraysh", "Al-Ma'un", "Al-Kawthar", "Al-Kafirun", "An-Nasr", "Al-Masad", "Al-Ikhlas", "Al-Falaq", "An-Nas"];
+const arNum=n=>String(n).replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]);
+// "73:6-9, 74:1" -> [{s:73,a:6,b:9},...]
+const parseRanges=str=>String(str||'').split(',').map(r=>r.trim().match(/^(\d+):(\d+)(?:-(\d+))?$/)).filter(Boolean).map(m=>({s:+m[1],a:+m[2],b:+(m[3]||m[2])}));
+// Arabic label: سورة المزمل ٦–٩ · 73:6–9
+const verseLabel=str=>parseRanges(str).map(r=>`<span class="vlab"><span class="ar">سورة ${SAR[r.s]||''} ${arNum(r.a)}${r.b!==r.a?'–'+arNum(r.b):''}</span><span class="mono">${STR[r.s]||''} ${r.s}:${r.a}${r.b!==r.a?'–'+r.b:''}</span></span>`).join('');
+const embed=(id,t,auto)=>`https://www.youtube-nocookie.com/embed/${id}?enablejsapi=1&rel=0&playsinline=1&modestbranding=1${t?`&start=${Math.floor(t)}`:''}${auto?'&autoplay=1':''}&origin=${encodeURIComponent(location.origin)}`;
+const yt=(id,t)=>`https://www.youtube.com/watch?v=${id}${t?`&t=${Math.floor(t)}s`:''}`;
+const slug=s=>(s||'').toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]+/g,'-').replace(/^-|-$/g,'').slice(0,60);
+
+const catalog=await (await fetch('data/catalog.json')).json();
+catalog.sort((a,b)=>a.i-b.i);
+const byId=Object.fromEntries(catalog.map(c=>[c.id,c]));
+const own=catalog.filter(c=>!c.g&&!c.skip&&!c.dup&&!['course','ramadan-taraweeh','prayer/event'].includes(c.cat));
+const seriesIndex={};
+for(const c of own){if(c.s){const k=slug(c.s);(seriesIndex[k]=seriesIndex[k]||{name:c.s,cat:catOf(c),items:[]}).items.push(c)}}
+let docs=null;const ixCache={},shCache={};
+async function getBucket(b){if(!ixCache[b])ixCache[b]=fetch(`data/ix/${b}.json`).then(r=>r.json());return ixCache[b]}
+async function getShard(n){if(!shCache[n])shCache[n]=fetch(`data/sh/${n}.json`).then(r=>r.json());return shCache[n]}
+async function getDocs(){if(!docs)docs=await (await fetch('data/docs.json')).json();return docs}
+
+// ---------- rail
+function renderRail(active){
+ const counts={};for(const c of own){const k=catOf(c);counts[k]=(counts[k]||0)+1}
+ rail.innerHTML=`<a href="#home" class="${active==='home'?'on':''}">Overview</a><a href="#who" class="${active==='who'?'on':''}">Who he is</a><a href="#topics" class="${active==='topics'?'on':''}">Themes</a>`+CATS.map(([k,n])=>`<a href="#${k}" class="${active===k?'on':''}">${n}<span class="n">${counts[k]||0}</span></a>`).join('')+`<a href="#years" class="${active==='years'?'on':''}">By year</a>`;
+}
+// ---------- years
+function years(){
+ renderRail('years');
+ const byY={};for(const c of own){if(c.y)(byY[c.y]=byY[c.y]||[]).push(c)}
+ const ys=Object.keys(byY).map(Number).sort((a,b)=>b-a);
+ const hours=c=>Math.round(c.reduce((s,x)=>s+(x.d||0),0)/3600);
+ main.innerHTML=`<section class="block"><h2>By year</h2><p class="lede">Dates are exact for transcribed recordings and approximate (from the upload age) for the rest.</p>
+ <div class="tiles">${ys.map(y=>`<a class="tile" href="#y-${y}"><b>${y}</b><span>${byY[y].length} recordings</span><i>${hours(byY[y])} h</i></a>`).join('')}</div></section>`;
+}
+function year(y){
+ renderRail('years');
+ const items=own.filter(c=>c.y===y).sort((a,b)=>a.i-b.i);
+ if(!items.length){main.innerHTML='<div class="empty">Nothing recorded that year.</div>';return}
+ const groups={};for(const c of items){const k=catOf(c);(groups[k]=groups[k]||[]).push(c)}
+ main.innerHTML=`<section class="block"><div class="eyebrow">By year</div><h2>${y}</h2><p class="lede">${items.length} recordings, newest first.</p>
+ ${CATS.filter(([k])=>groups[k]).map(([k,n])=>`<h3>${n} <span class="muted mono" style="font-size:12px">${groups[k].length}</span></h3><div class="list">${groups[k].map(rowHtml).join('')}</div>`).join('')}</section>`;
+}
+// ---------- home
+function home(){
+ renderRail('home');
+ const hours=c=>Math.round(c.reduce((s,x)=>s+(x.d||0),0)/3600);
+ const txN=own.filter(c=>c.tx).length;
+ const latest=own.filter(c=>c.cat!=='khaterah').slice(0,12);
+ main.innerHTML=`<div class="hero"><div class="eyebrow">Sh. Adnan Rajeh · London, Ontario</div><h2>Every lecture, sermon and halaqah, in one place</h2><p>${own.length.toLocaleString()} recordings from both channels, ${hours(own).toLocaleString()} hours, 2018 to now. Search runs across the ${txN} transcribed lectures and jumps to the exact minute on YouTube.</p></div>
+ <div class="tiles">${CATS.map(([k,n])=>{const items=own.filter(c=>catOf(c)===k);return `<a class="tile" href="#${k}"><b>${items.length}</b><span>${n}</span><i>${hours(items)} h</i></a>`}).join('')}</div>
+ <section class="block"><h2>Most recent</h2><div class="list">${latest.map(rowHtml).join('')}</div></section>`;
+}
+function rowHtml(c){const title=c.s?c.lab:c.t;const showSub=c.s&&!title.toLowerCase().startsWith(c.s.toLowerCase());return `<a class="row" href="#v-${c.id}"><span class="t ${isAr(title)?'ar':''}">${esc(title)}</span><span class="m">${fmtD(c.d)}${c.date||c.ad?' · '+fmtDate(c):''}</span>${showSub?`<span class="s">${esc(c.s)}${c.ep!=null?' · '+c.ep:''}</span>`:''}</a>`}
+// ---------- category
+function category(k){
+ renderRail(k);
+ const [,name,desc]=CATS.find(x=>x[0]===k);
+ const items=own.filter(c=>catOf(c)===k);
+ const groups={};const standalone=[];
+ for(const c of items){if(c.s)(groups[c.s]=groups[c.s]||[]).push(c);else standalone.push(c)}
+ let order=Object.entries(groups);
+ if(k==='ramadan'){order.sort((a,b)=>b[0].localeCompare(a[0]))}
+ else if(k==='tafseer'||k==='tazkiyah'){order.sort((a,b)=>b[1].length-a[1].length)}
+ else{order.sort((a,b)=>Math.min(...a[1].map(x=>x.i))-Math.min(...b[1].map(x=>x.i)))}
+ const guests=k==='khutbah'?catalog.filter(c=>c.cat==='khutbah'&&c.g):[];
+ main.innerHTML=`<section class="block"><h2>${name}</h2><p class="lede">${desc}</p>
+  <div class="serieslist">${order.map(([s,arr])=>{const sn=arr.find(x=>x.sn)?.sn;return `<a class="series" href="#s-${slug(s)}"><span class="${isAr(s)?'ar':''}">${sn?`<span class="ar" style="font-size:18px;margin-left:8px;float:right">${SAR[sn]}</span>`:''}${esc(s)}</span><span class="n">${arr.length}</span></a>`}).join('')}</div>
+  ${standalone.length?`<h3>${k==='khaterah'?'Untitled reminders, by date':'Standalone'}</h3><div class="list">${standalone.map(rowHtml).join('')}</div>`:''}
+  ${guests.length?`<h3>Guest khutbahs on the channel</h3><div class="list">${guests.map(rowHtml).join('')}</div>`:''}
+ </section>`;
+}
+// ---------- series
+function series(k){
+ const g=seriesIndex[k];if(!g){main.innerHTML='<div class="empty">No such series.</div>';return}
+ renderRail(g.cat);
+ const items=[...g.items];
+ const hasEp=items.filter(x=>x.ep!=null).length>items.length/2;
+ if(hasEp)items.sort((a,b)=>(a.ep??1e9)-(b.ep??1e9)||b.i-a.i);else items.sort((a,b)=>b.i-a.i);
+ const hours=Math.round(items.reduce((s,x)=>s+(x.d||0),0)/3600*10)/10;
+ const sn=items.find(x=>x.sn)?.sn,sar=items.find(x=>x.sar)?.sar;
+ main.innerHTML=`<section class="block"><div class="eyebrow">${CATS.find(x=>x[0]===g.cat)[1]}</div>${sn||sar?`<div class="surah-head"><span class="ar">سورة ${sn?SAR[sn]:esc(sar)}</span>${sn?`<span class="sub">${STR[sn]} · ${sn}</span>`:''}</div>`:''}<h2 class="${isAr(g.name)?'ar':''}">${esc(g.name)}</h2><p class="lede">${items.length} recordings · ${hours} h${hasEp?' · in episode order':' · oldest first'}</p><div class="list">${items.map(rowHtml).join('')}</div></section>`;
+}
+// ---------- video
+async function video(id,t0){
+ const c=byId[id];if(!c){main.innerHTML='<div class="empty">Not in the catalog.</div>';return}
+ renderRail(catOf(c));
+ const title=c.s?c.lab:c.t;
+ main.innerHTML=`<article class="video">
+  <div><div id="shead">${c.sn||c.sar?`<div class="surah-head"><span class="ar">سورة ${c.sn?SAR[c.sn]:esc(c.sar)}</span>${c.sn?`<span class="sub">${STR[c.sn]} · ${c.sn}</span>`:''}</div>`:''}</div>${c.s?`<div class="eyebrow"><a href="#s-${slug(c.s)}">${esc(c.s)}</a>${c.ep!=null?' · episode '+c.ep:''}</div>`:`<div class="eyebrow">${CATS.find(x=>x[0]===catOf(c))?.[1]||''}</div>`}<h2 id="vtitle" class="${isAr(title)?'ar':''}">${esc(title)}</h2>
+  <div class="meta"><span>${fmtDate(c)}</span><span>${fmtD(c.d)}</span>${c.lang==='ar'?'<span>Arabic</span>':''}${c.sp==='unsure'?'<span>Speaker not confirmed as Sh. Adnan</span>':''}<span class="muted">${esc(c.t)}</span></div></div>
+  ${noEmbed?`<div class="player" id="player" style="position:static"><div class="pbar" style="margin:0"><button type="button" id="popbtn">▶ Play in player window</button><span>Times on this page then play in that same window, so you stay here.</span></div></div>`:`<div class="player" id="player"><div class="frame"><iframe id="ytf" title="${esc(title)}" src="${embed(c.id,t0,!!t0)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div><div class="pbar"><span>Tap any line below to play from there</span><button type="button" id="pmini">Smaller</button><a href="${yt(c.id)}" target="_blank" rel="noopener">Open on YouTube</a></div></div>`}
+  <div id="vbody"><p class="status">Loading…</p></div>
+ </article>`;
+ const body=$('#vbody');
+ if(c.dup){body.innerHTML=`<div class="empty">This upload is the same recording as <a href="#v-${c.dup}">${esc((byId[c.dup]||{}).t||c.dup)}</a>. Notes and search live there.</div>`;return}
+ if(!c.tx){body.innerHTML=`<div class="empty">Not transcribed yet. Timestamps and search arrive when this recording is processed.</div>`;return}
+ const D=await getDocs();const d=D.find(x=>x.id===id);const [sh,N,T]=await Promise.all([getShard(d.sh),getNotes(d.sh),getThemes().catch(()=>null)]);const rec=sh[id];const n=N[id];
+ const ch=(rec.ch||[]).filter(x=>x[0]!=null);const V=Object.assign({},T?T.verses:{},(n&&n.vt)||{});const tlabel=s=>(T&&T.themes.find(x=>x.slug===s)?.label)||s.replace(/^new:/,'');
+ const noteHtml=n?`${n.speaker==='guest'?`<div class="empty">Speaker appears to be a guest, not Sh. Adnan: ${esc(n.speaker_note||'')}</div>`:''}
+  <section class="block prose"><p class="eyebrow">In one line</p><p><b>${esc(n.one_line||'')}</b></p><p class="eyebrow">Summary</p>${(n.summary||'').split(/\n\n+/).map(p=>`<p>${esc(p)}</p>`).join('')}</section>
+  ${n.themes?.length?`<section class="block"><h3>Themes in this lecture</h3><div class="themelinks">${[...new Map(n.themes.map(t=>[t.theme,t])).values()].map(t=>`<a class="pill ${t.weight===3?'big':''}" href="#t-${tslug(t.theme)}">${esc(tlabel(t.theme))}</a>`).join('')}</div></section>`:''}
+  ${n.outline?.length?`<section class="block"><h3>Outline</h3><div class="outline">${n.outline.map(o=>`<div class="${['Opening','Outro','Interlude'].includes(o.heading)?'side':''}"><a class="ts" href="${yt(id,o.start)}" target="_blank" rel="noopener">${fmtT(o.start)} – ${fmtT(o.end)}</a><span>${o.verses?verseLabel(o.verses):''}<b>${esc(o.heading)}</b>${esc(o.gist||'')}</span></div>`).join('')}</div></section>`:''}
+  ${n.vck?.length?`<details class="sec" open><summary>Verses he explains <span class="muted mono" style="font-size:12px">${esc(n.vc||'')}</span></summary><div>${n.vck.filter(k=>V[k]).map(k=>{const seg=(n.outline||[]).find(o=>String(o.verses||'').split(',').some(r=>{const m=r.trim().match(/^(\d+):(\d+)(?:-(\d+))?$/);if(!m)return false;const [s,a]=k.split(':').map(Number);return +m[1]===s&&a>=+m[2]&&a<=+(m[3]||m[2])}));return `<div class="verse"><div class="ref">${verseLabel(k)}${seg?` <a class="ts" href="${yt(id,seg.start)}" target="_blank" rel="noopener">${fmtT(seg.start)}</a> ${esc(seg.heading)}`:''}</div><div class="ar">${esc(V[k].ar)}</div><div class="en">${esc(V[k].en)}</div></div>`}).join('')}</div></details>`:''}
+  ${n.themes?.length?`<section class="block"><h3>Where each theme is discussed</h3>${n.themes.map(t=>`<div class="span" style="margin-bottom:6px"><a class="ts" href="${yt(id,t.start)}" target="_blank" rel="noopener">${fmtT(t.start)} – ${fmtT(t.end)}</a><span><a href="#t-${tslug(t.theme)}">${esc(tlabel(t.theme))}</a>${t.note?` · ${esc(t.note)}`:''}</span></div>`).join('')}</section>`:''}
+  ${n.quran?.length?`<section class="block"><h3>Verses he cites</h3>${n.quran.map(q=>`<div class="verse"><div class="ref"><a class="ts" href="${yt(id,q.start)}" target="_blank" rel="noopener">${fmtT(q.start)}</a> · ${esc(q.surah||'')} ${esc(q.ref)}${q.conf&&q.conf!=='high'?` · reference ${esc(q.conf)} confidence`:''}</div>${(q.keys||[]).map(k=>V[k]?`<div class="ar">${esc(V[k].ar)}</div>`:'').join('')}<div class="en">${(q.keys||[]).map(k=>V[k]?esc(V[k].en):'').filter(Boolean).join(' ')}</div>${q.point?`<div class="cites"><span>${esc(q.point)}</span></div>`:''}</div>`).join('')}</section>`:''}
+  ${n.hadith?.length?`<section class="block"><h3>Narrations</h3><div class="narr">${n.hadith.map(h=>`<div>${esc(h.gist)}<div class="src">${h.source?esc(h.source)+' · ':''}<a class="ts" href="${yt(id,h.start)}" target="_blank" rel="noopener">${fmtT(h.start)}</a></div></div>`).join('')}</div></section>`:''}
+  ${n.stories?.length?`<section class="block"><h3>Stories and examples</h3><div class="kv">${n.stories.map(s=>`<div><a class="ts" href="${yt(id,s.start)}" target="_blank" rel="noopener">${fmtT(s.start)}</a> <b>${esc(s.who)}</b> · ${esc(s.point||'')}</div>`).join('')}</div></section>`:''}
+  ${n.maxims?.length?`<section class="block"><h3>His phrases</h3><div class="maxims">${n.maxims.map(m=>`<span class="maxim">${esc(m)}</span>`).join('')}</div></section>`:''}
+  ${n.takeaways?.length?`<section class="block"><h3>What he asks of the listener</h3><div class="kv">${n.takeaways.map(x=>`<div>· ${esc(x)}</div>`).join('')}</div></section>`:''}
+  ${n.contemporary?.length?`<section class="block"><h3>References to the moment</h3><div class="kv">${n.contemporary.map(x=>`<div>· ${esc(x)}</div>`).join('')}</div></section>`:''}`:'';
+ if(n&&n.title&&/^(verses?|ayat|part|episode|session|ep\.?)\s*\d/i.test(title)){const h=$('#vtitle');if(h){h.textContent=n.title.replace(/\s*\(\d{1,3}\)/g,'');h.className='';h.insertAdjacentHTML('afterend',`<div class="meta"><span>${esc(title)}</span></div>`)}}
+ if(n&&n.vc){const rs=parseRanges(n.vc);const bySurah={};rs.forEach(r=>{(bySurah[r.s]=bySurah[r.s]||[]).push(r)});const sh=$('#shead');if(sh)sh.innerHTML=Object.entries(bySurah).map(([s,arr])=>`<div class="surah-head"><span class="ar">سورة ${SAR[s]}</span><span class="ar" style="font-size:22px">الآيات ${arr.map(r=>arNum(r.a)+(r.b!==r.a?'–'+arNum(r.b):'')).join('، ')}</span><span class="sub">${STR[s]} ${arr.map(r=>s+':'+r.a+(r.b!==r.a?'–'+r.b:'')).join(', ')}</span></div>`).join('')}
+ body.innerHTML=`${noteHtml}${ch.length?`<section class="block"><h3>YouTube chapters</h3><div class="chapters">${ch.map(([t,nm])=>`<a href="${yt(id,t)}" target="_blank" rel="noopener"><span class="ts">${fmtT(t)}</span><span>${esc(nm)}</span></a>`).join('')}</div></section>`:''}
+  <section class="block"><h3>Find a moment in this lecture</h3><form class="inline" id="vfind"><input id="vq" type="search" placeholder="word or phrase" aria-label="Find in this lecture"><button type="submit">Find</button></form><div id="vres" class="moments" style="margin-top:10px"></div></section>`;
+ $('#vfind').addEventListener('submit',e=>{e.preventDefault();const q=$('#vq').value.trim();const ms=momentsFor(rec.p,toks(q),q.toLowerCase(),40);$('#vres').innerHTML=ms.length?ms.map(m=>momentHtml(id,m)).join(''):'<p class="status">No match in this lecture.</p>'});
+}
+// ---------- search core
+function momentsFor(paras,terms,rawq,max){
+ const out=[];const rx=terms.length?new RegExp('('+terms.map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')','i'):null;
+ for(const [t,text] of paras){
+  const low=text.toLowerCase();let pos=-1,hits=0;
+  if(rawq&&rawq.length>3&&low.includes(rawq)){pos=low.indexOf(rawq);hits=terms.length+2}
+  else if(rx){for(const term of terms){const i=low.search(new RegExp('\\b'+term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')));if(i>=0){hits++;if(pos<0||i<pos)pos=i}}}
+  if(hits){out.push({t,hits,snip:snippet(text,pos,rx)})}
+ }
+ out.sort((a,b)=>b.hits-a.hits||a.t-b.t);
+ return out.slice(0,max).sort((a,b)=>a.t-b.t);
+}
+function snippet(text,pos,rx){
+ let s=Math.max(0,pos-90),e=Math.min(text.length,pos+130);
+ if(s>0){const sp=text.lastIndexOf(' ',s);s=sp>0?sp+1:s}if(e<text.length){const sp=text.indexOf(' ',e);e=sp>0?sp:e}
+ let frag=esc(text.slice(s,e));if(rx)frag=frag.replace(new RegExp(rx.source,'gi'),'<mark>$1</mark>');
+ return (s>0?'… ':'')+frag+(e<text.length?' …':'');
+}
+const momentHtml=(id,m)=>`<div class="moment"><a class="ts" href="${yt(id,m.t)}" target="_blank" rel="noopener">${fmtT(m.t)}</a><a href="${yt(id,m.t)}" target="_blank" rel="noopener">${m.snip}</a></div>`;
+let lastQuery='';let filterCat='all';
+async function search(q){
+ renderRail('search');lastQuery=q;
+ const terms=[...new Set(toks(q))];const rawq=q.toLowerCase().trim();
+ main.innerHTML=`<section class="block"><h2>“${esc(q)}”</h2><div class="filters" id="filters"></div><p class="status" id="sstatus">Searching…</p><div class="results" id="results"></div></section>`;
+ // title matches across the whole catalog (khaterahs included)
+ const tq=terms.length?terms:[rawq];
+ const titleHits=own.filter(c=>{const s=(c.t+' '+(c.s||'')).toLowerCase().replace(/[’']/g,'');return tq.every(t=>s.includes(t))}).slice(0,40);
+ if(!terms.length){$('#sstatus').textContent='Type at least one word of three letters.';return}
+ const D=await getDocs();
+ const buckets=[...new Set(terms.map(bucketOf))];const bk=await Promise.all(buckets.map(getBucket));const dict=Object.assign({},...bk);
+ const score=new Map(),seen=new Map();
+ for(const term of terms){const lst=dict[term];if(!lst)continue;const df=lst.length/2;const idf=Math.log(1+D.length/df);
+  for(let i=0;i<lst.length;i+=2){const d=lst[i],c=lst[i+1];const w=D[d].w||3000;score.set(d,(score.get(d)||0)+idf*(1+Math.log(c))*Math.min(1,3000/w+0.5));seen.set(d,(seen.get(d)||0)+1)}}
+ let ranked=[...score.entries()].filter(([d])=>seen.get(d)===terms.length);
+ let partial=false;if(!ranked.length){ranked=[...score.entries()];partial=true}
+ ranked.sort((a,b)=>b[1]-a[1]);
+ const top=ranked.slice(0,24);
+ const shards=[...new Set(top.map(([d])=>D[d].sh))];const shd=await Promise.all(shards.map(getShard));const shmap=Object.fromEntries(shards.map((s,i)=>[s,shd[i]]));
+ const hits=[];
+ for(const [d] of top){const id=D[d].id;const c=byId[id];if(!c)continue;const rec=shmap[D[d].sh][id];const ms=momentsFor(rec.p,terms,rawq,6);if(ms.length)hits.push({c,ms})}
+ const cats=[...new Set(hits.map(h=>catOf(h.c)))];
+ $('#filters').innerHTML=`<button class="on" data-k="all">All</button>`+cats.map(k=>`<button data-k="${k}">${CATS.find(x=>x[0]===k)?.[1]||k}</button>`).join('');
+ $('#filters').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;[...e.currentTarget.children].forEach(x=>x.classList.toggle('on',x===b));filterCat=b.dataset.k;draw()});
+ function draw(){
+  const list=hits.filter(h=>filterCat==='all'||catOf(h.c)===filterCat);
+  $('#sstatus').textContent=`${hits.length} lectures with matching moments${partial?' (no lecture has every word; showing the closest)':''}${titleHits.length?` · ${titleHits.length} titles match`:''}`;
+  $('#results').innerHTML=(titleHits.length&&filterCat==='all'?`<div class="hit"><h3>Matching titles</h3><div class="list">${titleHits.map(rowHtml).join('')}</div></div>`:'')+(list.length?list.map(h=>`<div class="hit"><h3><a href="#v-${h.c.id}" class="${isAr(h.c.t)?'ar':''}">${esc(h.c.s?h.c.lab:h.c.t)}</a></h3><div class="sub">${h.c.s?esc(h.c.s)+(h.c.ep!=null?' · '+h.c.ep:'')+' · ':''}${fmtDate(h.c)} · ${fmtD(h.c.d)}</div><div class="moments">${h.ms.map(m=>momentHtml(h.c.id,m)).join('')}</div></div>`).join(''):(titleHits.length?'':'<div class="empty">Nothing found in the transcribed lectures.</div>'));
+ }
+ filterCat='all';draw();
+}
+// ---------- topics
+let themesData=null;const notesCache={};
+async function getThemes(){if(!themesData)themesData=await (await fetch('data/themes.json')).json();return themesData}
+async function getNotes(sh){if(!(sh in notesCache))notesCache[sh]=fetch(`data/notes/${sh}.json`).then(r=>r.ok?r.json():{}).catch(()=>({}));return notesCache[sh]}
+const tslug=s=>s.replace(/^new:/,'new_');
+function pillHtml(t,big){return `<a class="pill ${big?'big':''}" href="#t-${tslug(t.slug)}">${esc(t.label)}<b>${t.n}</b></a>`}
+async function topics(){
+ renderRail('topics');
+ const T=await getThemes();const by=Object.fromEntries(T.themes.map(t=>[t.slug,t]));
+ const top=[...T.themes].sort((a,b)=>b.weight-a.weight).slice(0,12);
+ main.innerHTML=`<section class="block"><h2>His recurring themes</h2><p class="lede">Every subject he has returned to across ${T.noted} annotated lectures, grouped the way his teaching groups them. The count is the number of lectures where the theme gets real time. Open a theme for what he teaches on it, the verses and narrations he builds on, and every moment it comes up.</p>
+ <h3>Most returned to</h3><div class="pills" style="margin-bottom:18px">${top.map(t=>pillHtml(t,true)).join('')}</div>
+ <div class="domains">${T.domains.map(d=>`<div class="domain"><h3>${esc(d.name)}</h3><div class="pills">${d.themes.map(s=>by[s]).filter(Boolean).sort((a,b)=>b.n-a.n).map(t=>pillHtml(t)).join('')}</div></div>`).join('')}</div></section>`;
+}
+function verseHtml(q,V,withCites){
+ const keys=q.keys||[];
+ return `<div class="verse"><div class="ref">${esc(q.surah||'')} ${esc(q.ref)}</div>${keys.map(k=>V[k]?`<div class="ar">${esc(V[k].ar)}</div>`:'').join('')}<div class="en">${keys.map(k=>V[k]?esc(V[k].en):'').filter(Boolean).join(' ')}</div>${withCites&&q.cites?`<div class="cites">${q.cites.map(c=>{const l=byId[c.id];return `<span><a href="${yt(c.id,c.start)}" target="_blank" rel="noopener" class="ts">${fmtT(c.start)}</a> <a href="#v-${c.id}">${esc(l?(l.s?l.lab:l.t):c.id)}</a>${c.point?` · ${esc(c.point)}`:''}</span>`}).join('')}</div>`:(q.point?`<div class="cites"><span>${esc(q.point)}</span></div>`:'')}</div>`;
+}
+function refsHtml(refs){if(!refs||!refs.length)return '';const g=new Map();refs.forEach(r=>{if(!g.has(r.id))g.set(r.id,[]);g.get(r.id).push(r.t)});return `<span class="refs">${[...g].map(([id,ts])=>{const l=byId[id];const nm=l?(l.s?(l.s+(l.ep!=null?' '+l.ep:'')):l.t):id;return `<span class="rg">${ts.sort((a,b)=>a-b).map(t=>`<a class="ts" href="${yt(id,t)}" target="_blank" rel="noopener">${fmtT(t)}</a>`).join(' ')} <a href="#v-${id}">${esc(nm.length>48?nm.slice(0,46)+'…':nm)}</a></span>`}).join('')}</span>`}
+function vrefText(txt,V){return esc(txt).replace(/\b(\d{1,3}):(\d{1,3})(?:-(\d{1,3}))?\b/g,(m,s,a,b)=>V&&V[s+':'+a]?`<a class="vref" href="javascript:void 0" data-k="${m}">${m}</a>`:m)}
+document.addEventListener('click',e=>{const a=e.target.closest('a.vref');if(!a)return;e.preventDefault();const li=a.closest('li,p,div');const ex=li.querySelector(':scope > .vx[data-k="'+a.dataset.k+'"]');if(ex){ex.remove();return}const V=(themesData&&themesData.verses)||{};const r=parseRanges(a.dataset.k)[0];if(!r)return;const keys=[];for(let v=r.a;v<=Math.min(r.b,r.a+9);v++)keys.push(r.s+':'+v);const d=document.createElement('div');d.className='verse vx';d.dataset.k=a.dataset.k;d.innerHTML=`<div class="ref">${verseLabel(a.dataset.k)}</div><div class="ar">${keys.map(k=>V[k]?esc(V[k].ar):'').join(' ')}</div><div class="en">${keys.map(k=>V[k]?esc(V[k].en):'').join(' ')}</div>`;li.appendChild(d)});
+async function topic(slugKey){
+ const T=await getThemes();const t=T.themes.find(x=>tslug(x.slug)===slugKey);
+ if(!t){main.innerHTML='<div class="empty">No such theme yet.</div>';renderRail('topics');return}
+ renderRail('topics');const V=T.verses;
+ const dates=t.lectures.map(l=>l.date).filter(Boolean).sort();
+ const synth=t.synth;
+ const lecHtml=l=>`<div class="lec ${l.w===3?'w3':''}"><div class="head"><a href="#v-${l.id}" class="${isAr(l.title)?'ar':''}">${esc(l.title)}</a><span class="m">${l.series?esc(l.series)+(l.ep!=null?' · '+l.ep:'')+' · ':''}${l.date?fmtDate({date:l.date.length>7?l.date:null,ad:l.date.length<=7?l.date:null}):''}</span></div>${l.spans.map(s=>`<div class="span"><a class="ts" href="${yt(l.id,s.start)}" target="_blank" rel="noopener">${fmtT(s.start)} – ${fmtT(s.end)}</a><span>${esc(s.note||'')}</span></div>`).join('')}</div>`;
+ main.innerHTML=`<article class="topic"><div class="eyebrow"><a href="#topics">Themes</a></div><h2>${esc(t.label)}</h2><p class="lede">${t.n} lectures${dates.length?` · ${dates[0].slice(0,4)} to ${dates[dates.length-1].slice(0,4)}`:''}. Lectures where this is the main subject are marked with a green edge.</p>
+ ${synth?`<section class="block prose synth"><h3>What he teaches</h3>${(synth.summary||'').split(/\n\n+/).map(p=>`<p>${vrefText(p,V)}</p>`).join('')}${(synth.sections||[]).length>1?`<p class="eyebrow" style="margin-top:12px">On this page</p><ol class="toc">${synth.sections.map((x,i)=>`<li><a href="javascript:void 0" onclick="document.getElementById('sx${i}').scrollIntoView({behavior:'smooth'})">${esc(x.heading)}</a></li>`).join('')}</ol>`:''}</section>
+ ${(synth.sections||[]).map((x,i)=>`<section class="block synth" id="sx${i}"><h3 class="big">${esc(x.heading)}</h3>${x.intro?`<p class="lede">${esc(x.intro)}</p>`:''}${(x.body||'').split(/\n\n+/).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join('')}${(x.subs||[]).map(u=>`<h4>${esc(u.heading)}</h4><ul class="pts">${(u.points||[]).map(pt=>`<li>${vrefText(pt.text,V)} ${refsHtml(pt.refs)}</li>`).join('')}</ul>`).join('')}</section>`).join('')}
+ ${synth.khutbah_seeds?.length?`<details class="sec" open><summary>Khutbah angles from his material</summary><ul class="pts">${synth.khutbah_seeds.map(k=>`<li>${esc(k.text)} ${refsHtml(k.refs)}</li>`).join('')}</ul></details>`:''}`:`<section class="block"><p class="status">The written synthesis for this theme is still being prepared. The verses, narrations and every lecture moment below are already complete for the ${T.noted} lectures annotated so far.</p></section>`}
+ ${t.quran.length?`<details class="sec" open><summary>Verses he builds on <span class="muted mono" style="font-size:12px">${t.quran.length}</span></summary><div>${t.quran.map(q=>verseHtml(q,V,true)).join('')}</div></details>`:''}
+ ${t.hadith.length?`<details class="sec" open><summary>Narrations he brings <span class="muted mono" style="font-size:12px">${t.hadith.length}</span></summary><div class="narr">${t.hadith.map(h=>{const l=byId[h.id];return `<div>${esc(h.gist)}<div class="src">${h.source?esc(h.source)+' · ':''}<a class="ts" href="${yt(h.id,h.start)}" target="_blank" rel="noopener">${fmtT(h.start)}</a> <a href="#v-${h.id}">${esc(l?(l.s?l.lab:l.t):h.id)}</a></div></div>`}).join('')}</div></details>`:''}
+ ${t.maxims.length?`<details class="sec" open><summary>His phrases</summary><div class="maxims">${t.maxims.map(m=>`<span class="maxim">${esc(m)}</span>`).join('')}</div></details>`:''}
+ <details class="sec" open><summary>Every time he takes it up <span class="muted mono" style="font-size:12px">${t.n}</span></summary><div>${t.lectures.map(lecHtml).join('')}</div></details>
+ </article>`;
+}
+
+let whoData=null;
+async function who(){
+ renderRail('who');
+ main.innerHTML='<p class="status">Loading…</p>';
+ if(!whoData)whoData=await (await fetch('data/who.json')).json();
+ const W=whoData,P=W.profile,F=(P&&P.facts)||[];
+ const pick=(cats,n)=>F.filter(f=>cats.includes(f.category)).sort((a,b)=>(b.refs||[]).length-(a.refs||[]).length).slice(0,n);
+ const factLi=f=>{const r=(f.refs||[])[0];const t=f.claim;return `<li>${r?`<a href="${yt(r.id,r.t)}" target="_blank" rel="noopener" title="${esc(f.claim)}">${esc(t)}</a>`:esc(t)}</li>`};
+ const factsNode=(title,cats,n)=>{const xs=pick(cats,n);return `<div class="node"><h3>${title}</h3>${xs.length?`<ul>${xs.map(factLi).join('')}</ul>`:`<p class="empty-b">Being compiled from what he says about himself in his talks.</p>`}</div>`};
+ const fmtNode=`<div class="node"><h3>How he teaches</h3><ul>${W.formats.map(f=>`<li><a href="#${({'Friday khutbahs':'khutbah','Khaterahs':'khaterah','Tafseer':'tafseer','Arabic tafsir':'tafseer','Seerah':'seerah','Lecture series':'series','Tazkiyah':'tazkiyah','Ramadan talks':'ramadan','Workshops and other':'other'})[f.name]||'home'}">${esc(f.name)}</a><span class="k">${f.n} · ${f.hours} h${f.from?` · ${f.from}${f.to!==f.from?'–'+f.to:''}`:''}</span></li>`).join('')}</ul></div>`;
+ const thNode=`<div class="node"><h3>What he returns to</h3><ul>${W.domains.map(d=>d.themes[0]).filter(Boolean).map(t=>`<li><a href="#t-${tslug(t.slug)}">${esc(t.label)}</a><span class="k">${t.n}</span></li>`).join('')}</ul></div>`;
+ const causes=['palestine','syria','activism','muslims-in-the-west','youth','community','justice'];
+ const allT=W.domains.flatMap(d=>d.themes);
+ const T=await getThemes().catch(()=>null);const by=T?Object.fromEntries(T.themes.map(t=>[t.slug,t])):{};
+ const cNode=`<div class="node"><h3>Causes he carries</h3><ul>${causes.map(s=>by[s]).filter(Boolean).map(t=>`<li><a href="#t-${tslug(t.slug)}">${esc(t.label)}</a><span class="k">${t.n}</span></li>`).join('')}</ul></div>`;
+ const vNode=`<div class="node"><h3>Verses he builds on most</h3><ul>${W.verses.slice(0,7).map(v=>{const c=v.cites[0];return `<li><a href="${yt(c.id,c.t)}" target="_blank" rel="noopener">${esc(v.ref)}</a> <span class="muted">${esc(v.en.length>70?v.en.slice(0,68)+'…':v.en)}</span><span class="k">${v.n}</span></li>`}).join('')}</ul></div>`;
+ const phNode=`<div class="node"><h3>His phrases</h3><ul>${W.phrases.slice(0,8).map(p=>`<li>“${esc(p)}”</li>`).join('')}</ul></div>`;
+ const core=`<div class="node core"><div class="eyebrow">Imam · London, Ontario</div><h2>Sh. Adnan Rajeh</h2><p>${W.total.toLocaleString()} recordings · ${W.hours.toLocaleString()} hours</p>${W.span?`<p>${W.span[0]} to ${W.span[1]}</p>`:''}<p>${W.noted} lectures annotated so far</p></div>`;
+ const cells=[factsNode('Teachers and formative moments',['Teachers and influences','Formative experiences'],5),thNode,factsNode('His method and aims',['Teaching method and aims','Practices'],5),cNode,core,vNode,phNode.replace('<div class="node">','<div class="node mid">')];
+ const cats=['Teachers and influences','Teaching method and aims','Formative experiences','Practices'];
+ main.innerHTML=`<article class="topic"><div class="eyebrow">Mind map</div><h2>Who he is</h2><p class="lede">Built from his own words across the lectures. Every line opens the moment on YouTube where he says it.</p>
+ <div class="mm" id="mm"><svg class="links" aria-hidden="true"></svg>${cells.join('')}</div>
+ ${F.length?`<section class="block facts"><h3>In his own words</h3>${cats.map(c=>{const xs=F.filter(f=>f.category===c);return xs.length?`<h4>${esc(c)}</h4><ul class="pts">${xs.map(f=>`<li>${esc(f.claim)}${f.confidence&&f.confidence!=='high'?` <span class="muted">(${esc(f.confidence)} confidence)</span>`:''} ${refsHtml(f.refs)}</li>`).join('')}</ul>`:''}).join('')}</section>`:''}
+ <section class="block"><h3>The verses he returns to most</h3><p class="lede">Counted across annotated lectures, leaving out the standard opening and closing verses of the khutbah.</p>${W.verses.map(v=>`<div class="verse"><div class="ref">${verseLabel(v.ref)} <span class="muted">${v.n} lectures</span></div><div class="ar">${esc(v.ar)}</div><div class="en">${esc(v.en)}</div><div class="cites">${v.cites.map(c=>{const l=byId[c.id];return `<span><a class="ts" href="${yt(c.id,c.t)}" target="_blank" rel="noopener">${fmtT(c.t)}</a> <a href="#v-${c.id}">${esc(l?(l.s?l.lab:l.t):c.id)}</a>${c.point?` · ${esc(c.point)}`:''}</span>`}).join('')}</div></div>`).join('')}</section>
+ </article>`;
+ drawLinks();
+}
+function drawLinks(){
+ const mm=$('#mm');if(!mm)return;const svg=mm.querySelector('svg');const nodes=[...mm.querySelectorAll('.node')];const core=mm.querySelector('.core');if(!core)return;
+ if(getComputedStyle(svg).display==='none')return;
+ const R=mm.getBoundingClientRect();const c=core.getBoundingClientRect();const cx=c.left+c.width/2-R.left,cy=c.top+c.height/2-R.top;
+ svg.setAttribute('viewBox',`0 0 ${R.width} ${R.height}`);
+ svg.innerHTML=nodes.filter(n=>n!==core).map(n=>{const b=n.getBoundingClientRect();return `<line x1="${cx}" y1="${cy}" x2="${b.left+b.width/2-R.left}" y2="${b.top+b.height/2-R.top}"/>`}).join('');
+}
+window.addEventListener('resize',()=>{if(location.hash==='#who')drawLinks()});
+// ---------- routing
+function route(){
+ const h=(location.hash||'#home').slice(1);
+ window.scrollTo(0,0);
+ if(h==='home')return home();
+ if(h.startsWith('v-')){const [vid,tt]=h.slice(2).split('~');return video(vid,tt?+tt:0)}
+ if(h.startsWith('s-'))return series(h.slice(2));
+ if(CATS.some(x=>x[0]===h))return category(h);
+ if(h==='years')return years();
+ if(/^y-\d{4}$/.test(h))return year(+h.slice(2));
+ if(h==='who')return who();
+ if(h==='topics')return topics();
+ if(h.startsWith('t-'))return topic(h.slice(2));
+ if(h==='search'){if(lastQuery)return search(lastQuery);return home()}
+ home();
+}
+$('#searchform').addEventListener('submit',e=>{e.preventDefault();const q=$('#q').value.trim();if(!q)return;if(location.hash!=='#search'){lastQuery=q;location.hash='#search'}else search(q)});
+window.addEventListener('hashchange',route);
+// ---------- embedded player: every YouTube time link plays inside the site
+let ytAPI=false,noEmbed=false,pw=null;
+const popOpen=(id,t)=>{pw=window.open(yt(id,t),'adnanPlayer','popup,width=760,height=470');if(pw)try{pw.focus()}catch(e){}return !!pw};
+function toPopup(){if(noEmbed)return;noEmbed=true;const p=document.getElementById('player');if(!p)return;const id=location.hash.slice(3).split('~')[0];
+ p.innerHTML=`<div class="pbar" style="margin:0"><button type="button" id="popbtn">▶ Play in player window</button><span>Times on this page then play in that same window, so you stay here.</span></div>`;p.style.position='static'}
+document.addEventListener('securitypolicyviolation',e=>{if(/youtube/.test(e.blockedURI||''))toPopup()});
+window.addEventListener('message',e=>{if(/youtube(-nocookie)?\.com$/.test(new URL(e.origin).hostname))ytAPI=true});
+const ytCmd=(f,a=[])=>{const fr=document.getElementById('ytf');fr&&fr.contentWindow&&fr.contentWindow.postMessage(JSON.stringify({event:'command',func:f,args:a}),'*')};
+document.addEventListener('load',e=>{if(e.target&&e.target.id==='ytf'){ytAPI=false;e.target.contentWindow.postMessage(JSON.stringify({event:'listening',id:'ytf'}),'*')}},true);
+function seek(t){const id=location.hash.slice(3).split('~')[0];if(noEmbed){popOpen(id,t);return}const fr=document.getElementById('ytf');if(!fr)return;
+ if(ytAPI){ytCmd('seekTo',[t,true]);ytCmd('playVideo')}else{const id=location.hash.slice(3).split('~')[0];fr.src=embed(id,t,true)}
+ const p=document.getElementById('player');if(p&&p.getBoundingClientRect().top<0)p.scrollIntoView({block:'start'})}
+document.addEventListener('click',e=>{
+ if(e.target.id==='popbtn'){popOpen(location.hash.slice(3).split('~')[0],+(location.hash.split('~')[1]||0));return}
+ if(e.target.id==='pmini'){const p=$('#player');p.classList.toggle('mini');e.target.textContent=p.classList.contains('mini')?'Larger':'Smaller';return}
+ const a=e.target.closest('a[href*="youtube.com/watch"]');if(!a||a.closest('.pbar'))return;
+ if(e.metaKey||e.ctrlKey||e.shiftKey)return;
+ const u=new URL(a.href);const vid=u.searchParams.get('v');const t=parseInt(u.searchParams.get('t')||'0',10)||0;if(!vid||!byId[vid])return;
+ e.preventDefault();
+ const cur=location.hash.startsWith('#v-')?location.hash.slice(3).split('~')[0]:null;
+ if(noEmbed){document.querySelectorAll('a.ts.on').forEach(x=>x.classList.remove('on'));if(a.classList.contains('ts'))a.classList.add('on');popOpen(vid,t);return}
+ if(cur===vid&&document.getElementById('ytf')){document.querySelectorAll('a.ts.on').forEach(x=>x.classList.remove('on'));if(a.classList.contains('ts'))a.classList.add('on');seek(t)}
+ else location.hash='#v-'+vid+(t?'~'+t:'');
+});
+// rows that carry a time become the link: tap the text, the player jumps there
+const ROWS='.outline>div,.span,.verse,.narr>div,.kv>div,.moment,.rg,.cites>span,.node li';
+function wireJumps(root){root.querySelectorAll('a.ts').forEach(a=>{const r=a.closest(ROWS);if(!r||r.classList.contains('jump'))return;if(r.querySelectorAll('a.ts').length!==1&&!r.matches('.rg'))return;if(r.closest('.side')||r.classList.contains('side'))return;r.classList.add('jump');r.dataset.href=a.href})}
+new MutationObserver(()=>wireJumps(main)).observe(main,{childList:true,subtree:true});
+document.addEventListener('click',e=>{if(e.target.dataset&&e.target.dataset.syn)return;const r=e.target.closest('.jump');if(!r)return;const inner=e.target.closest('a');if(inner&&!inner.classList.contains('ts')&&inner.closest('.jump')===r&&!/youtube\.com\/watch/.test(inner.href))return;
+ e.preventDefault();e.stopPropagation();document.querySelectorAll('.jump.on').forEach(x=>x.classList.remove('on'));r.classList.add('on');const a=document.createElement('a');a.href=r.dataset.href;a.className='ts';a.dataset.syn='1';r.appendChild(a);a.click();a.remove()},true);
+const setTop=()=>{const t=document.querySelector('.top');if(t)document.documentElement.style.setProperty('--toph',t.offsetHeight+'px')};
+window.addEventListener('resize',setTop);setTop();
+$('#foot').textContent=`Catalog of ${catalog.length.toLocaleString()} recordings from the Adnan Rajeh and Muslim Wellness channels · ${own.filter(c=>c.tx).length} transcribed · tap a line to play from there`;
+route();
+})();
+</script>
+</body></html>
