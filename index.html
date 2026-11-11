@@ -89,6 +89,8 @@ a.ts.on{background:var(--accent);color:#fff}
 .outline div.tzj{grid-template-columns:1fr}
 .player audio{width:min(100%,640px);height:44px;display:block}
 .tzlab{font-family:var(--font-display,inherit);font-weight:700;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);margin:14px 0 4px}
+#tzlock{max-width:360px}#tzlock input{font:inherit;font-size:18px;letter-spacing:.3em;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);width:160px}#tzlock button{font:inherit;padding:10px 16px;border-radius:8px;border:0;background:var(--accent);color:#fff;margin-left:8px;cursor:pointer}
+.tzl .row .s,.tzl .row .m,.tzl .lede1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tzl .row{padding-block:7px}.tzl h3{margin-top:14px}
 button.pill{cursor:pointer;font:inherit;font-size:13px}button.pill:hover{border-color:var(--accent)}
 .watch{display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:8px;background:var(--accent);color:#fff;font-weight:500;width:fit-content;max-width:100%}
 .watch:hover{text-decoration:none;filter:brightness(1.08)}
@@ -493,14 +495,18 @@ let TZ=null;const tzData=async()=>TZ||(TZ=await (await fetch('data/tz.json')).js
 const tzA=n=>`tz/a/L${String(n).padStart(2,'0')}.webm`;
 const tzList=a=>`<ul class="pts">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`;
 async function tzRoute(h){
- renderRail('tz');const D=await tzData();
+ renderRail('tz');
+ let ok=false;try{ok=localStorage.getItem('tzok')==='1'}catch(e){}
+ if(!ok&&!window.__tzok){main.innerHTML=`<section class="block"><h2>Tazkiyah Halaqah</h2><form id="tzlock"><p class="lede">Enter the code to open.</p><input type="password" inputmode="numeric" autocomplete="off" id="tzpw" maxlength="8"><button type="submit">Open</button><p class="muted" id="tzerr" style="margin-top:8px"></p></form></section>`;
+  $('#tzpw').focus();$('#tzlock').onsubmit=e=>{e.preventDefault();if($('#tzpw').value==='0000'){window.__tzok=true;try{localStorage.setItem('tzok','1')}catch(e){}tzRoute(h)}else{$('#tzerr').textContent='Wrong code.';$('#tzpw').value=''}};return}
+ const D=await tzData();
  const exById=Object.fromEntries(D.EX.map(e=>[e.id,e]));
  if(h==='tz'){
   main.innerHTML=`<section class="block"><h2>Tazkiyah Halaqah</h2><p class="lede">Weekly halaqah, ${esc(D.L[0].date)} to ${esc(D.L[D.L.length-1].date)}.</p>
   <div class="serieslist"><a class="series" href="#tz-lessons"><span>Lessons</span><span class="n">${D.L.length}</span></a><a class="series" href="#tz-exercises"><span>Exercises</span><span class="n">${D.EX.length}</span></a></div></section>`;return}
  if(h==='tz-lessons'){
-  main.innerHTML=`<section class="block"><div class="eyebrow"><a href="#tz">Tazkiyah Halaqah</a></div><h2>Lessons</h2><p class="lede">${D.L.length} lessons in order.</p>
-  ${D.PH.map(p=>`<h3>${esc(p.title)} <span class="muted mono" style="font-size:12px">${p.r[0]}–${p.r[1]}</span></h3><p class="lede">${esc(p.blurb)}</p><div class="list">${D.L.filter(l=>l.n>=p.r[0]&&l.n<=p.r[1]).map(l=>`<a class="row" href="#tz-l-${l.n}"><span class="t">${l.n}. ${esc(l.title)}</span><span class="m">${l.min} min · ${esc(l.date)}</span></a>`).join('')}</div>`).join('')}</section>`;return}
+  main.innerHTML=`<section class="block tzl"><div class="eyebrow"><a href="#tz">Tazkiyah Halaqah</a></div><h2>Lessons</h2><p class="lede">${D.L.length} lessons in order.</p>
+  ${D.PH.map(p=>`<h3>${esc(p.title)} <span class="muted mono" style="font-size:12px">${p.r[0]}–${p.r[1]}</span></h3><p class="lede lede1">${esc(p.blurb)}</p><div class="list">${D.L.filter(l=>l.n>=p.r[0]&&l.n<=p.r[1]).map(l=>`<a class="row" href="#tz-l-${l.n}"><span class="t">${l.n}. ${esc(l.title)}</span><span class="m">${l.min} min · ${esc(l.date)}</span></a>`).join('')}</div>`).join('')}</section>`;return}
  if(h.startsWith('tz-l-')){const n=+h.slice(5);const l=D.L.find(x=>x.n===n);if(!l){main.innerHTML='<div class="empty">No such lesson.</div>';return}
   const prev=D.L.find(x=>x.n===n-1),next=D.L.find(x=>x.n===n+1);
   main.innerHTML=`<article class="video"><div><div class="eyebrow"><a href="#tz-lessons">Tazkiyah Halaqah · Lessons</a> · lesson ${n}</div><h2>${esc(l.title)}</h2><div class="meta"><span>${esc(l.date)}</span><span>${l.min} min</span></div></div>
@@ -511,7 +517,7 @@ async function tzRoute(h){
   ${l.ex?.length?`<section class="block"><h3>Exercises in this lesson</h3><div class="list">${l.ex.map(id=>exById[id]).filter(Boolean).map(e=>`<a class="row" href="#tz-e-${e.id}"><span class="t">${esc(e.title)}</span><span class="s">${esc(e.instr||'')}</span></a>`).join('')}</div></section>`:''}
   <section class="block"><div class="list">${prev?`<a class="row" href="#tz-l-${prev.n}"><span class="t">← ${prev.n}. ${esc(prev.title)}</span></a>`:''}${next?`<a class="row" href="#tz-l-${next.n}"><span class="t">${next.n}. ${esc(next.title)} →</span></a>`:''}</div></section></div></article>`;return}
  if(h==='tz-exercises'){
-  main.innerHTML=`<section class="block"><div class="eyebrow"><a href="#tz">Tazkiyah Halaqah</a></div><h2>Exercises</h2><p class="lede">${D.EX.length} exercises, in the order he first set them.</p><div class="list">${D.EX.map(e=>`<a class="row" href="#tz-e-${e.id}"><span class="t">${esc(e.title)}</span><span class="m">${e.uses.length>1?'lessons '+[...new Set(e.uses.map(u=>u.n))].join(', '):'lesson '+e.uses[0].n}</span><span class="s">${esc(e.instr||'')}</span></a>`).join('')}</div></section>`;return}
+  main.innerHTML=`<section class="block tzl"><div class="eyebrow"><a href="#tz">Tazkiyah Halaqah</a></div><h2>Exercises</h2><p class="lede">${D.EX.length} exercises, in the order he first set them.</p><div class="list">${D.EX.map(e=>`<a class="row" href="#tz-e-${e.id}"><span class="t">${esc(e.title)}</span><span class="m">${e.uses.length>1?'lessons '+[...new Set(e.uses.map(u=>u.n))].join(', '):'lesson '+e.uses[0].n}</span><span class="s">${esc(e.instr||'')}</span></a>`).join('')}</div></section>`;return}
  if(h.startsWith('tz-e-')){const e=exById[h.slice(5)];if(!e){main.innerHTML='<div class="empty">No such exercise.</div>';return}
   const u0=e.uses[0];
   main.innerHTML=`<article class="video"><div><div class="eyebrow"><a href="#tz-exercises">Tazkiyah Halaqah · Exercises</a></div><h2>${esc(e.title)}</h2><div class="meta"><span>${e.uses.length>1?'Lessons '+[...new Set(e.uses.map(u=>u.n))].join(', '):'Lesson '+u0.n}</span></div></div>
