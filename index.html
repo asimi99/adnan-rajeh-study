@@ -85,6 +85,11 @@ a.ts.on{background:var(--accent);color:#fff}
 .jump:hover{background:var(--accent-soft)}
 .jump.on{background:var(--accent-soft);box-shadow:inset 3px 0 0 var(--accent)}
 .outline>div.jump{grid-template-columns:1fr}
+.tzj{cursor:pointer;transition:background .12s}.tzj:hover{background:var(--accent-soft)!important}.tzj.on{background:var(--accent-soft)!important;box-shadow:inset 3px 0 0 var(--accent)}
+.outline div.tzj{grid-template-columns:1fr}
+.player audio{width:min(100%,640px);height:44px;display:block}
+.tzlab{font-family:var(--font-display,inherit);font-weight:700;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);margin:14px 0 4px}
+button.pill{cursor:pointer;font:inherit;font-size:13px}button.pill:hover{border-color:var(--accent)}
 .watch{display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:8px;background:var(--accent);color:#fff;font-weight:500;width:fit-content;max-width:100%}
 .watch:hover{text-decoration:none;filter:brightness(1.08)}
 .watch .mono{opacity:.85;font-size:13px}
@@ -265,7 +270,7 @@ async function getDocs(){if(!docs)docs=await (await fetch('data/docs.json')).jso
 // ---------- rail
 function renderRail(active){
  const counts={};for(const c of own){const k=catOf(c);counts[k]=(counts[k]||0)+1}
- rail.innerHTML=`<a href="#home" class="${active==='home'?'on':''}">Overview</a><a href="#who" class="${active==='who'?'on':''}">Who he is</a><a href="#topics" class="${active==='topics'?'on':''}">Themes</a>`+CATS.map(([k,n])=>`<a href="#${k}" class="${active===k?'on':''}">${n}<span class="n">${counts[k]||0}</span></a>`).join('')+`<a href="#years" class="${active==='years'?'on':''}">By year</a>`;
+ rail.innerHTML=`<a href="#home" class="${active==='home'?'on':''}">Overview</a><a href="#who" class="${active==='who'?'on':''}">Who he is</a><a href="#topics" class="${active==='topics'?'on':''}">Themes</a>`+CATS.map(([k,n])=>`<a href="#${k}" class="${active===k?'on':''}">${n}<span class="n">${counts[k]||0}</span></a>`).join('')+`<a href="#tz" class="${active==='tz'?'on':''}">Tazkiyah Halaqah<span class="n">51</span></a><a href="#years" class="${active==='years'?'on':''}">By year</a>`;
 }
 // ---------- years
 function years(){
@@ -483,6 +488,51 @@ function drawLinks(){
 }
 window.addEventListener('resize',()=>{if(location.hash==='#who')drawLinks()});
 // ---------- routing
+// ---------- Tazkiyah halaqah recordings
+let TZ=null;const tzData=async()=>TZ||(TZ=await (await fetch('data/tz.json')).json());
+const tzA=n=>`tz/a/L${String(n).padStart(2,'0')}.webm`;
+const tzList=a=>`<ul class="pts">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`;
+async function tzRoute(h){
+ renderRail('tz');const D=await tzData();
+ const exById=Object.fromEntries(D.EX.map(e=>[e.id,e]));
+ if(h==='tz'){const mins=D.L.reduce((s,l)=>s+(l.min||0),0);
+  main.innerHTML=`<div class="hero"><div class="eyebrow">Weekly halaqah · ${esc(D.L[0].date)} to ${esc(D.L[D.L.length-1].date)}</div><h2>Tazkiyah Halaqah</h2><p>${D.L.length} recorded lessons on purifying the self, with the exercises he set each week and what the group found doing them.</p></div>
+  <div class="tiles"><a class="tile" href="#tz-lessons"><b>${D.L.length}</b><span>Lessons</span><i>${Math.round(mins/60)} h</i></a><a class="tile" href="#tz-exercises"><b>${D.EX.length}</b><span>Exercises</span><i>with audio</i></a></div>
+  <section class="block"><h2>How the lessons build</h2><div class="list">${D.PH.map(p=>`<a class="row" href="#tz-lessons"><span class="t">${esc(p.title)}</span><span class="m">Lessons ${p.r[0]}–${p.r[1]}</span><span class="s">${esc(p.blurb)}</span></a>`).join('')}</div></section>`;return}
+ if(h==='tz-lessons'){
+  main.innerHTML=`<section class="block"><div class="eyebrow"><a href="#tz">Tazkiyah Halaqah</a></div><h2>Lessons</h2><p class="lede">${D.L.length} lessons in order.</p>
+  ${D.PH.map(p=>`<h3>${esc(p.title)} <span class="muted mono" style="font-size:12px">${p.r[0]}–${p.r[1]}</span></h3><p class="lede">${esc(p.blurb)}</p><div class="list">${D.L.filter(l=>l.n>=p.r[0]&&l.n<=p.r[1]).map(l=>`<a class="row" href="#tz-l-${l.n}"><span class="t">${l.n}. ${esc(l.title)}</span><span class="m">${l.min} min · ${esc(l.date)}</span></a>`).join('')}</div>`).join('')}</section>`;return}
+ if(h.startsWith('tz-l-')){const n=+h.slice(5);const l=D.L.find(x=>x.n===n);if(!l){main.innerHTML='<div class="empty">No such lesson.</div>';return}
+  const prev=D.L.find(x=>x.n===n-1),next=D.L.find(x=>x.n===n+1);
+  main.innerHTML=`<article class="video"><div><div class="eyebrow"><a href="#tz-lessons">Tazkiyah Halaqah · Lessons</a> · lesson ${n}</div><h2>${esc(l.title)}</h2><div class="meta"><span>${esc(l.date)}</span><span>${l.min} min</span></div></div>
+  <div class="player" id="player"><audio id="tza" controls preload="metadata" src="${tzA(n)}"></audio><div class="pbar"><span>Tap any line below to play from there</span></div></div>
+  <div>${l.obj?.length?`<section class="block prose"><p class="eyebrow">What this lesson sets out to do</p>${tzList(l.obj)}</section>`:''}
+  ${l.topics?.length?`<section class="block"><h3>Outline</h3><div class="outline">${l.topics.map(t=>`<div class="tzj" data-at="${t[0]}"><span><b>${esc(t[1])}</b>${esc(t[2]||'')}</span></div>`).join('')}</div></section>`:''}
+  ${l.q?.length?`<section class="block"><h3>Quran recited</h3><div class="themelinks">${l.q.map(q=>`<button type="button" class="pill tzq" data-at="${q[0]}">${esc(q[4])} ${q[1]}:${q[2]}${q[3]!==q[2]?'–'+q[3]:''}</button>`).join('')}</div></section>`:''}
+  ${l.ex?.length?`<section class="block"><h3>Exercises in this lesson</h3><div class="list">${l.ex.map(id=>exById[id]).filter(Boolean).map(e=>`<a class="row" href="#tz-e-${e.id}"><span class="t">${esc(e.title)}</span><span class="s">${esc(e.instr||'')}</span></a>`).join('')}</div></section>`:''}
+  <section class="block"><div class="list">${prev?`<a class="row" href="#tz-l-${prev.n}"><span class="t">← ${prev.n}. ${esc(prev.title)}</span></a>`:''}${next?`<a class="row" href="#tz-l-${next.n}"><span class="t">${next.n}. ${esc(next.title)} →</span></a>`:''}</div></section></div></article>`;return}
+ if(h==='tz-exercises'){
+  main.innerHTML=`<section class="block"><div class="eyebrow"><a href="#tz">Tazkiyah Halaqah</a></div><h2>Exercises</h2><p class="lede">${D.EX.length} exercises, in the order he first set them.</p><div class="list">${D.EX.map(e=>`<a class="row" href="#tz-e-${e.id}"><span class="t">${esc(e.title)}</span><span class="m">${e.uses.length>1?'lessons '+[...new Set(e.uses.map(u=>u.n))].join(', '):'lesson '+e.uses[0].n}</span><span class="s">${esc(e.instr||'')}</span></a>`).join('')}</div></section>`;return}
+ if(h.startsWith('tz-e-')){const e=exById[h.slice(5)];if(!e){main.innerHTML='<div class="empty">No such exercise.</div>';return}
+  const u0=e.uses[0];
+  main.innerHTML=`<article class="video"><div><div class="eyebrow"><a href="#tz-exercises">Tazkiyah Halaqah · Exercises</a></div><h2>${esc(e.title)}</h2><div class="meta"><span>${e.uses.length>1?'Lessons '+[...new Set(e.uses.map(u=>u.n))].join(', '):'Lesson '+u0.n}</span></div></div>
+  <div class="player" id="player"><audio id="tza" controls preload="metadata" src="${tzA(u0.n)}#t=${u0.t}" data-n="${u0.n}"></audio><div class="pbar"><span id="tzwhich">Lesson ${u0.n}</span><span>Tap a lesson below to hear where it was taught</span></div></div>
+  <div>${e.instr?`<section class="block prose"><p class="eyebrow">The exercise</p><p><b>${esc(e.instr)}</b></p></section>`:''}
+  ${e.uses.map(u=>{const l=D.L.find(x=>x.n===u.n)||{};return `<section class="block"><div class="tzj" data-at="${u.t}" data-n="${u.n}" style="padding:6px 8px;border-radius:6px"><h3>Lesson ${u.n}: ${esc(l.title||'')}</h3><span class="muted">${esc(l.date||'')} · play from where he set it</span></div>
+   ${u.instr?`<p style="margin-top:8px">${esc(u.instr)}</p>`:''}
+   ${u.feel?.length?`<div class="tzlab">What you might feel</div>${tzList(u.feel)}`:''}
+   ${u.usual?.length?`<div class="tzlab">What people usually feel</div>${tzList(u.usual)}`:''}
+   ${u.should?.length?`<div class="tzlab">What to aim to feel</div>${tzList(u.should)}`:''}
+   ${u.answers?.length?`<div class="tzlab">What the group said</div>${tzList(u.answers)}`:''}
+   <p><a href="#tz-l-${u.n}">Open lesson ${u.n} →</a></p></section>`}).join('')}</div></article>`;return}
+ main.innerHTML='<div class="empty">Not found.</div>';
+}
+document.addEventListener('click',e=>{const r=e.target.closest('.tzj,.tzq');if(!r)return;const a=document.getElementById('tza');if(!a)return;e.preventDefault();
+ const t=+r.dataset.at||0;const n=r.dataset.n;
+ const go=()=>{a.currentTime=t;a.play().catch(()=>{})};
+ if(n&&a.dataset.n!==n){a.dataset.n=n;a.src=tzA(+n);const w=document.getElementById('tzwhich');if(w)w.textContent='Lesson '+n;a.addEventListener('loadedmetadata',go,{once:true});a.load()}else go();
+ document.querySelectorAll('.tzj.on,.tzq.on').forEach(x=>x.classList.remove('on'));r.classList.add('on');
+ const p=document.getElementById('player');if(p&&p.getBoundingClientRect().top<0)p.scrollIntoView({block:'start'})});
 function route(){
  const h=(location.hash||'#home').slice(1);
  window.scrollTo(0,0);
@@ -490,6 +540,7 @@ function route(){
  if(h.startsWith('v-')){const [vid,tt]=h.slice(2).split('~');return video(vid,tt?+tt:0)}
  if(h.startsWith('s-'))return series(h.slice(2));
  if(CATS.some(x=>x[0]===h))return category(h);
+ if(h==='tz'||h.startsWith('tz-'))return tzRoute(h);
  if(h==='years')return years();
  if(/^y-\d{4}$/.test(h))return year(+h.slice(2));
  if(h==='who')return who();
