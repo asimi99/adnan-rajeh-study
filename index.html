@@ -93,6 +93,8 @@ a.ts.on{background:var(--accent);color:#fff}
 .thh{margin:22px 0 8px}.thgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
 .thcard{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);text-decoration:none}.thcard:hover{border-color:var(--accent)}
 .thcard .tt{font-size:14px;line-height:1.35}.thcard .n{font-family:var(--mono,ui-monospace,monospace);font-size:12px;color:var(--muted)}.thcard .sub{grid-column:1/-1;font-size:12px;color:var(--muted)}
+#myref{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);resize:vertical}#myref:focus{outline:2px solid var(--accent);outline-offset:0}
+.row{position:relative}.row .bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--line);border-radius:0 0 8px 8px;overflow:hidden}.row .bar b{display:block;height:100%;background:var(--accent)}
 button.pill{cursor:pointer;font:inherit;font-size:13px}button.pill:hover{border-color:var(--accent)}
 .watch{display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:8px;background:var(--accent);color:#fff;font-weight:500;width:fit-content;max-width:100%}
 .watch:hover{text-decoration:none;filter:brightness(1.08)}
@@ -268,9 +270,25 @@ async function getBucket(b){if(!ixCache[b])ixCache[b]=fetch(`data/ix/${b}.json`)
 async function getShard(n){if(!shCache[n])shCache[n]=fetch(`data/sh/${n}.json`).then(r=>r.json());return shCache[n]}
 async function getDocs(){if(!docs)docs=await (await fetch('data/docs.json')).json();return docs}
 // ---------- rail
+// ---------- personal: progress, history, reflections (this device)
+const ME={k:'ars:v1',d:null,load(){if(this.d)return this.d;try{this.d=JSON.parse(localStorage.getItem(this.k)||'{}')}catch(e){this.d={}}this.d.prog=this.d.prog||{};this.d.notes=this.d.notes||{};this.d.tz=this.d.tz||{};return this.d},
+ save(){try{localStorage.setItem(this.k,JSON.stringify(this.d))}catch(e){}},
+ prog(id){return this.load().prog[id]},setProg(id,t,d){const D=this.load();D.prog[id]={t:Math.floor(t),d:Math.floor(d||0),at:Date.now()};this.save()},
+ note(id){return (this.load().notes[id]||{}).text||''},setNote(id,text){const D=this.load();if(text.trim())D.notes[id]={text,at:Date.now()};else delete D.notes[id];this.save()}};
+const pct=p=>p&&p.d?Math.min(100,Math.round(p.t/p.d*100)):0;
+function meRows(kind){const D=ME.load();let xs=Object.entries(D.prog).filter(([id])=>byId[id]).map(([id,p])=>({c:byId[id],p}));
+ if(kind==='cont')xs=xs.filter(x=>x.p.t>30&&(!x.p.d||x.p.t<x.p.d-60));
+ return xs.sort((a,b)=>b.p.at-a.p.at)}
+const meRow=x=>`<a class="row" href="#v-${x.c.id}~${x.p.t}"><span class="t">${esc(x.c.s?(x.c.lab||x.c.dt||x.c.t):(x.c.dt||x.c.t))}</span><span class="m">${fmtT(x.p.t)}${x.p.d?' / '+fmtT(x.p.d):''}</span><span class="s">${x.c.s?esc(x.c.s):''}</span><i class="bar"><b style="width:${pct(x.p)}%"></b></i></a>`;
+function mine(){renderRail('mine');const D=ME.load();const cont=meRows('cont'),recent=meRows('all').slice(0,30);
+ const notes=Object.entries(D.notes).filter(([id])=>byId[id]||id.startsWith('tz')).sort((a,b)=>b[1].at-a[1].at);
+ main.innerHTML=`<section class="block"><h2>My study</h2><p class="lede">Saved on this device.</p></section>
+ ${cont.length?`<section class="block"><h3>Continue watching</h3><div class="list">${cont.slice(0,12).map(meRow).join('')}</div></section>`:''}
+ <section class="block"><h3>My reflections <span class="muted mono" style="font-size:12px">${notes.length}</span></h3>${notes.length?`<div class="list">${notes.map(([id,n])=>{const c=byId[id];return `<a class="row" href="#v-${id}"><span class="t">${esc(c?(c.s?(c.lab||c.dt||c.t):(c.dt||c.t)):id)}</span><span class="m">${new Date(n.at).toLocaleDateString()}</span><span class="s">${esc(n.text.slice(0,160))}</span></a>`}).join('')}</div>`:'<p class="muted">Write a reflection on any lecture page and it collects here.</p>'}</section>
+ ${recent.length?`<section class="block"><h3>Recently watched</h3><div class="list">${recent.map(meRow).join('')}</div></section>`:''}`}
 function renderRail(active){
  const counts={};for(const c of own){const k=catOf(c);counts[k]=(counts[k]||0)+1}
- rail.innerHTML=`<a href="#home" class="${active==='home'?'on':''}">Overview</a><a href="#who" class="${active==='who'?'on':''}">Who he is</a><a href="#topics" class="${active==='topics'?'on':''}">Themes</a>`+CATS.map(([k,n])=>`<a href="#${k}" class="${active===k?'on':''}">${n}<span class="n">${counts[k]||0}</span></a>`).join('')+`<a href="#tz" class="${active==='tz'?'on':''}">Tazkiyah Halaqah<span class="n">51</span></a><a href="#years" class="${active==='years'?'on':''}">By year</a>`;
+ rail.innerHTML=`<a href="#home" class="${active==='home'?'on':''}">Overview</a><a href="#mine" class="${active==='mine'?'on':''}">My study${Object.keys(ME.load().notes).length?`<span class="n">${Object.keys(ME.load().notes).length}</span>`:''}</a><a href="#who" class="${active==='who'?'on':''}">Who he is</a><a href="#topics" class="${active==='topics'?'on':''}">Themes</a>`+CATS.map(([k,n])=>`<a href="#${k}" class="${active===k?'on':''}">${n}<span class="n">${counts[k]||0}</span></a>`).join('')+`<a href="#tz" class="${active==='tz'?'on':''}">Tazkiyah Halaqah<span class="n">51</span></a><a href="#years" class="${active==='years'?'on':''}">By year</a>`;
 }
 // ---------- years
 function years(){
@@ -295,7 +313,8 @@ function home(){
  const hours=c=>Math.round(c.reduce((s,x)=>s+(x.d||0),0)/3600);
  const txN=own.filter(c=>c.tx).length;
  const latest=own.filter(c=>c.cat!=='khaterah').slice(0,12);
- main.innerHTML=`<div class="hero"><div class="eyebrow">Sh. Adnan Rajeh · London, Ontario</div><h2>Every lecture, sermon and halaqah, in one place</h2><p>${own.length.toLocaleString()} recordings from both channels, ${hours(own).toLocaleString()} hours, 2018 to now. Search runs across the ${txN} transcribed lectures and jumps to the exact minute on YouTube.</p></div>
+ const cont=meRows('cont').slice(0,6);
+ main.innerHTML=(cont.length?`<section class="block"><h3>Continue watching</h3><div class="list">${cont.map(meRow).join('')}</div><p style="margin-top:8px"><a href="#mine">All my study →</a></p></section>`:'')+`<div class="hero"><div class="eyebrow">Sh. Adnan Rajeh · London, Ontario</div><h2>Every lecture, sermon and halaqah, in one place</h2><p>${own.length.toLocaleString()} recordings from both channels, ${hours(own).toLocaleString()} hours, 2018 to now. Search runs across the ${txN} transcribed lectures and jumps to the exact minute on YouTube.</p></div>
  <div class="tiles">${CATS.map(([k,n])=>{const items=own.filter(c=>catOf(c)===k);return `<a class="tile" href="#${k}"><b>${items.length}</b><span>${n}</span><i>${hours(items)} h</i></a>`}).join('')}</div>
  <section class="block"><h2>Most recent</h2><div class="list">${latest.map(rowHtml).join('')}</div></section>`;
 }
@@ -357,9 +376,10 @@ async function video(id,t0){
   `:'';
  if(n&&n.title&&/^(verses?|ayat|part|episode|session|ep\.?)\s*\d/i.test(title)){const h=$('#vtitle');if(h){h.textContent=n.title.replace(/\s*\(\d{1,3}\)/g,'');h.className='';h.insertAdjacentHTML('afterend',`<div class="meta"><span>${esc(title)}</span></div>`)}}
  if(n&&n.vc){const rs=parseRanges(n.vc);const bySurah={};rs.forEach(r=>{(bySurah[r.s]=bySurah[r.s]||[]).push(r)});const sh=$('#shead');if(sh)sh.innerHTML=Object.entries(bySurah).map(([s,arr])=>`<div class="surah-head"><span class="ar">سورة ${SAR[s]}</span><span class="ar" style="font-size:22px">الآيات ${arr.map(r=>arNum(r.a)+(r.b!==r.a?'–'+arNum(r.b):'')).join('، ')}</span><span class="sub">${STR[s]} ${arr.map(r=>s+':'+r.a+(r.b!==r.a?'–'+r.b:'')).join(', ')}</span></div>`).join('')}
- body.innerHTML=`${noteHtml}${ch.length?`<section class="block"><h3>YouTube chapters</h3><div class="chapters">${ch.map(([t,nm])=>`<a href="${yt(id,t)}" target="_blank" rel="noopener"><span class="ts">${fmtT(t)}</span><span>${esc(nm)}</span></a>`).join('')}</div></section>`:''}
+ body.innerHTML=`${noteHtml}<section class="block"><h3>My reflection</h3><textarea id="myref" rows="4" placeholder="What stayed with you, what you want to act on…">${esc(ME.note(id))}</textarea><div class="muted" id="myrefst" style="font-size:12px;margin-top:4px"></div></section>${ch.length?`<section class="block"><h3>YouTube chapters</h3><div class="chapters">${ch.map(([t,nm])=>`<a href="${yt(id,t)}" target="_blank" rel="noopener"><span class="ts">${fmtT(t)}</span><span>${esc(nm)}</span></a>`).join('')}</div></section>`:''}
   <section class="block"><h3>Find a moment in this lecture</h3><form class="inline" id="vfind"><input id="vq" type="search" placeholder="word or phrase" aria-label="Find in this lecture"><button type="submit">Find</button></form><div id="vres" class="moments" style="margin-top:10px"></div></section>`;
  $('#vfind').addEventListener('submit',e=>{e.preventDefault();const q=$('#vq').value.trim();const ms=momentsFor(rec.p,toks(q),q.toLowerCase(),40);$('#vres').innerHTML=ms.length?ms.map(m=>momentHtml(id,m)).join(''):'<p class="status">No match in this lecture.</p>'});
+ {const ta=$('#myref');if(ta){let tm;ta.addEventListener('input',()=>{clearTimeout(tm);$('#myrefst').textContent='';tm=setTimeout(()=>{ME.setNote(id,ta.value);$('#myrefst').textContent='Saved on this device'},600)})}}
 }
 // ---------- search core
 function momentsFor(paras,terms,rawq,max){
@@ -521,7 +541,7 @@ async function tzRoute(h){
   ${l.topics?.length?`<section class="block"><h3>Outline</h3><div class="outline">${l.topics.map(t=>`<div class="tzj" data-at="${t[0]}"><span><b>${esc(t[1])}</b>${esc(t[2]||'')}</span></div>`).join('')}</div></section>`:''}
   ${l.q?.length?`<section class="block"><h3>Quran recited</h3><div class="themelinks">${l.q.map(q=>`<button type="button" class="pill tzq" data-at="${q[0]}">${esc(q[4])} ${q[1]}:${q[2]}${q[3]!==q[2]?'–'+q[3]:''}</button>`).join('')}</div></section>`:''}
   ${l.ex?.length?`<section class="block"><h3>Exercises in this lesson</h3><div class="list">${l.ex.map(id=>exById[id]).filter(Boolean).map(e=>`<a class="row" href="#tz-e-${e.id}"><span class="t">${esc(e.title)}</span><span class="s">${esc(e.instr||'')}</span></a>`).join('')}</div></section>`:''}
-  <section class="block"><div class="list">${prev?`<a class="row" href="#tz-l-${prev.n}"><span class="t">← ${prev.n}. ${esc(prev.title)}</span></a>`:''}${next?`<a class="row" href="#tz-l-${next.n}"><span class="t">${next.n}. ${esc(next.title)} →</span></a>`:''}</div></section></div></article>`;return}
+  <section class="block"><div class="list">${prev?`<a class="row" href="#tz-l-${prev.n}"><span class="t">← ${prev.n}. ${esc(prev.title)}</span></a>`:''}${next?`<a class="row" href="#tz-l-${next.n}"><span class="t">${next.n}. ${esc(next.title)} →</span></a>`:''}</div></section></div></article>`;{const au=$('#tza'),key='L'+n,P=ME.load().tz[key];if(P&&P.t>20&&(!P.d||P.t<P.d-30))au.addEventListener('loadedmetadata',()=>{if(au.currentTime<1)au.currentTime=P.t},{once:true});let ls=0;au.addEventListener('timeupdate',()=>{if(Date.now()-ls<5000||au.currentTime<5)return;ls=Date.now();const D=ME.load();D.tz[key]={t:Math.floor(au.currentTime),d:Math.floor(au.duration||0),at:Date.now()};ME.save()})};return}
  if(h==='tz-exercises'){
   main.innerHTML=`<section class="block tzl"><div class="eyebrow"><a href="#tz">Tazkiyah Halaqah</a></div><h2>Exercises</h2><p class="lede">${D.EX.length} exercises, in the order he first set them.</p><div class="list">${D.EX.map(e=>`<a class="row" href="#tz-e-${e.id}"><span class="t">${esc(e.title)}</span><span class="m">${e.uses.length>1?'lessons '+[...new Set(e.uses.map(u=>u.n))].join(', '):'lesson '+e.uses[0].n}</span><span class="s">${esc(e.instr||'')}</span></a>`).join('')}</div></section>`;return}
  if(h.startsWith('tz-e-')){const e=exById[h.slice(5)];if(!e){main.innerHTML='<div class="empty">No such exercise.</div>';return}
@@ -548,7 +568,8 @@ function route(){
  const h=(location.hash||'#home').slice(1);
  window.scrollTo(0,0);
  if(h==='home')return home();
- if(h.startsWith('v-')){const [vid,tt]=h.slice(2).split('~');return video(vid,tt?+tt:0)}
+ if(h==='mine')return mine();
+ if(h.startsWith('v-')){const [vid,tt]=h.slice(2).split('~');let t0=tt?+tt:0;if(!tt){const p=ME.prog(vid);if(p&&p.t>30&&(!p.d||p.t<p.d-60))t0=p.t}return video(vid,t0)}
  if(h.startsWith('s-'))return series(h.slice(2));
  if(CATS.some(x=>x[0]===h))return category(h);
  if(h==='tz'||h.startsWith('tz-'))return tzRoute(h);
@@ -568,7 +589,11 @@ const popOpen=(id,t)=>{pw=window.open(yt(id,t),'adnanPlayer','popup,width=760,he
 function toPopup(){if(noEmbed)return;noEmbed=true;const p=document.getElementById('player');if(!p)return;const id=location.hash.slice(3).split('~')[0];
  p.innerHTML=`<div class="pbar" style="margin:0"><button type="button" id="popbtn">▶ Play in player window</button><span>Times on this page then play in that same window, so you stay here.</span></div>`;p.style.position='static'}
 document.addEventListener('securitypolicyviolation',e=>{if(/youtube/.test(e.blockedURI||''))toPopup()});
-window.addEventListener('message',e=>{if(/youtube(-nocookie)?\.com$/.test(new URL(e.origin).hostname))ytAPI=true});
+let _lastSave=0;
+window.addEventListener('message',e=>{let host='';try{host=new URL(e.origin).hostname}catch(x){}if(!/youtube(-nocookie)?\.com$/.test(host))return;ytAPI=true;
+ let m;try{m=typeof e.data==='string'?JSON.parse(e.data):e.data}catch(x){return}const inf=m&&m.info;if(!inf||inf.currentTime==null)return;
+ const id=location.hash.startsWith('#v-')?location.hash.slice(3).split('~')[0]:null;if(!id)return;
+ if(Date.now()-_lastSave>5000&&inf.currentTime>5){_lastSave=Date.now();const old=ME.prog(id);ME.setProg(id,inf.currentTime,inf.duration||(old&&old.d)||(byId[id]&&byId[id].d)||0)}});
 const ytCmd=(f,a=[])=>{const fr=document.getElementById('ytf');fr&&fr.contentWindow&&fr.contentWindow.postMessage(JSON.stringify({event:'command',func:f,args:a}),'*')};
 document.addEventListener('load',e=>{if(e.target&&e.target.id==='ytf'){ytAPI=false;e.target.contentWindow.postMessage(JSON.stringify({event:'listening',id:'ytf'}),'*')}},true);
 function seek(t){const id=location.hash.slice(3).split('~')[0];if(noEmbed){popOpen(id,t);return}const fr=document.getElementById('ytf');if(!fr)return;
