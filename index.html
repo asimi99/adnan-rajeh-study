@@ -68,7 +68,7 @@ section.block{margin-bottom:30px}
 .video h2{font-size:26px}
 .video .meta{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--muted);font-size:14px}
 .player{position:sticky;top:var(--toph,74px);z-index:4;background:var(--bg);padding-block:6px;margin-inline:-2px}
-.player .frame{position:relative;width:min(100%,calc(40vh*16/9));aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000;box-shadow:0 1px 0 var(--line)}
+.player .frame{position:relative;width:calc(min(100%,40vh*16/9) - (min(100%,40vh*16/9) - min(100%,300px))*var(--pw,0));transition:width .18s ease-out;will-change:width;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000;box-shadow:0 1px 0 var(--line)}
 .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .player .pbar{display:flex;gap:14px;align-items:center;font-size:13px;color:var(--muted);margin-top:6px;flex-wrap:wrap}
 .player .pbar button{font:inherit;font-size:13px;background:none;border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:3px 9px;cursor:pointer}
@@ -315,8 +315,7 @@ function home(){
  const latest=own.filter(c=>c.cat!=='khaterah').slice(0,12);
  const cont=meRows('cont').slice(0,6);
  main.innerHTML=(cont.length?`<section class="block"><h3>Continue watching</h3><div class="list">${cont.map(meRow).join('')}</div><p style="margin-top:8px"><a href="#mine">All my study →</a></p></section>`:'')+`<div class="hero"><div class="eyebrow">Sh. Adnan Rajeh · London, Ontario</div><h2>Every lecture, sermon and halaqah, in one place</h2><p>${own.length.toLocaleString()} recordings from both channels, ${hours(own).toLocaleString()} hours, 2018 to now. Search runs across the ${txN} transcribed lectures and jumps to the exact minute on YouTube.</p></div>
- <div class="tiles">${CATS.map(([k,n])=>{const items=own.filter(c=>catOf(c)===k);return `<a class="tile" href="#${k}"><b>${items.length}</b><span>${n}</span><i>${hours(items)} h</i></a>`}).join('')}</div>
- <section class="block"><h2>Most recent</h2><div class="list">${latest.map(rowHtml).join('')}</div></section>`;
+ <div class="tiles">${CATS.map(([k,n])=>{const items=own.filter(c=>catOf(c)===k);return `<a class="tile" href="#${k}"><b>${items.length}</b><span>${n}</span><i>${hours(items)} h</i></a>`}).join('')}</div>`;
 }
 function rowHtml(c){const title=(c.s?(c.lab||c.dt||c.t):(c.dt||c.t));const showSub=c.s&&!title.toLowerCase().startsWith(c.s.toLowerCase());return `<a class="row" href="#v-${c.id}"><span class="t ${isAr(title)?'ar':''}">${esc(title)}</span><span class="m">${fmtD(c.d)}${c.date||c.ad?' · '+fmtDate(c):''}</span>${showSub?`<span class="s">${esc(c.s)}${c.ep!=null?' · '+c.ep:''}</span>`:''}</a>`}
 // ---------- category
@@ -356,7 +355,7 @@ async function video(id,t0){
  main.innerHTML=`<article class="video">
   <div><div id="shead">${c.sn||c.sar?`<div class="surah-head"><span class="ar">سورة ${c.sn?SAR[c.sn]:esc(c.sar)}</span>${c.sn?`<span class="sub">${STR[c.sn]} · ${c.sn}</span>`:''}</div>`:''}</div>${c.s?`<div class="eyebrow"><a href="#s-${slug(c.s)}">${esc(c.s)}</a>${c.ep!=null?' · episode '+c.ep:''}</div>`:`<div class="eyebrow">${CATS.find(x=>x[0]===catOf(c))?.[1]||''}</div>`}<h2 id="vtitle" class="${isAr(title)?'ar':''}">${esc(title)}</h2>
   <div class="meta"><span>${fmtDate(c)}</span><span>${fmtD(c.d)}</span>${c.lang==='ar'?'<span>Arabic</span>':''}${c.sp==='unsure'?'<span>Speaker not confirmed as Sh. Adnan</span>':''}${c.dt?'':`<span class="muted">${esc(c.t)}</span>`}</div></div>
-  ${noEmbed?`<div class="player" id="player" style="position:static"><div class="pbar" style="margin:0"><button type="button" id="popbtn">▶ Play in player window</button><span>Times on this page then play in that same window, so you stay here.</span></div></div>`:`<div class="player" id="player"><div class="frame"><iframe id="ytf" title="${esc(title)}" src="${embed(c.id,t0,!!t0)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div><div class="pbar"><span>Tap any line below to play from there</span><button type="button" id="pmini">Smaller</button><a href="${yt(c.id)}" target="_blank" rel="noopener">Open on YouTube</a></div></div>`}
+  ${noEmbed?`<div class="player" id="player" style="position:static"><div class="pbar" style="margin:0"><button type="button" id="popbtn">▶ Play in player window</button><span>Times on this page then play in that same window, so you stay here.</span></div></div>`:`<div class="player" id="player"><div class="frame"><iframe id="ytf" title="${esc(title)}" src="${embed(c.id,t0,!!t0)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div><div class="pbar"><span>Tap any line below to play from there</span><a href="${yt(c.id)}" target="_blank" rel="noopener">Open on YouTube</a></div></div>`}
   <div id="vbody"><p class="status">Loading…</p></div>
  </article>`;
  const body=$('#vbody');
@@ -617,6 +616,8 @@ function wireJumps(root){root.querySelectorAll('a.ts').forEach(a=>{const r=a.clo
 new MutationObserver(()=>wireJumps(main)).observe(main,{childList:true,subtree:true});
 document.addEventListener('click',e=>{if(e.target.dataset&&e.target.dataset.syn)return;const r=e.target.closest('.jump');if(!r)return;const inner=e.target.closest('a');if(inner&&!inner.classList.contains('ts')&&inner.closest('.jump')===r&&!/youtube\.com\/watch/.test(inner.href))return;
  e.preventDefault();e.stopPropagation();document.querySelectorAll('.jump.on').forEach(x=>x.classList.remove('on'));r.classList.add('on');const a=document.createElement('a');a.href=r.dataset.href;a.className='ts';a.dataset.syn='1';r.appendChild(a);a.click();a.remove()},true);
+// player shrinks as you scroll, down to a small floating size
+let _rafP=0;window.addEventListener('scroll',()=>{if(_rafP)return;_rafP=requestAnimationFrame(()=>{_rafP=0;const p=document.getElementById('player');if(!p)return;const k=Math.max(0,Math.min(1,(window.scrollY-120)/520));p.style.setProperty('--pw',k.toFixed(3))})},{passive:true});
 const setTop=()=>{const t=document.querySelector('.top');if(t)document.documentElement.style.setProperty('--toph',t.offsetHeight+'px')};
 window.addEventListener('resize',setTop);setTop();
 $('#foot').textContent=`Catalog of ${catalog.length.toLocaleString()} recordings from the Adnan Rajeh and Muslim Wellness channels · ${own.filter(c=>c.tx).length} transcribed · tap a line to play from there`;
