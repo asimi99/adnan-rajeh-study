@@ -377,7 +377,7 @@ function category(k){
  const groups={};const standalone=[];
  for(const c of items){if(c.s)(groups[c.s]=groups[c.s]||[]).push(c);else standalone.push(c)}
  const newest=arr=>Math.min(...arr.map(x=>x.i));
- const card=([s,arr])=>{const sn=(s.includes('Surat ')&&arr.find(x=>x.sn)?.sn)||0;return `<a class="series" href="#s-${slug(s)}"><span>${esc(s.replace(/^(Tafseer|Arabic Tafsir): Surat /,''))}</span>${sn?`<span class="ar">${SAR[sn]}</span>`:''}</a>`};
+ const card=([s,arr])=>{const sn=(s.includes('Surat ')&&arr.find(x=>x.sn)?.sn)||0;return `<a class="series" href="#s-${slug(s)}"><span>${esc(s.replace(/^(Tafseer|Arabic Tafsir): Surat /,'').replace(k==='ramadan'?/^Ramadan 20\d\d: | \(20\d\d\)$/:/ \(20\d\d(–20\d\d)?\)$/,''))}</span>${sn?`<span class="ar">${SAR[sn]}</span>`:''}</a>`};
  const sec=(title,list)=>list.length?`${title?`<h3>${title}</h3>`:''}<div class="serieslist">${list.map(card).join('')}</div>`:'';
  let order=Object.entries(groups),body='';
  if(k==='tafseer'){
