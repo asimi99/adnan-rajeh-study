@@ -68,6 +68,8 @@ section.block{margin-bottom:30px}
 .video .meta{display:flex;flex-wrap:wrap;gap:6px 16px;color:var(--muted);font-size:14px}
 .player{position:sticky;top:var(--toph,74px);z-index:4;background:var(--bg);padding-block:6px;margin-inline:-2px}
 .player .frame{position:relative;width:calc(min(100%,40vh*16/9) - (min(100%,40vh*16/9) - min(100%,300px))*var(--pw,0));transition:width .12s ease-out;will-change:width;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#000;box-shadow:0 1px 0 var(--line)}
+@media (min-width:861px){.player.dock{position:fixed;top:calc(var(--toph,74px) + 14px);left:var(--dl);width:var(--dw);padding:0;margin:0;z-index:6;animation:dockin .18s ease-out}.player.dock .frame{width:100%!important;border-radius:8px}.player.dock audio{width:100%}.rail.docked{padding-top:calc(var(--dh) + 14px)}}
+@keyframes dockin{from{opacity:.3;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .player .pbar{display:flex;gap:14px;align-items:center;font-size:13px;color:var(--muted);margin-top:6px;flex-wrap:wrap}
 .player .pbar button{font:inherit;font-size:13px;background:none;border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:3px 9px;cursor:pointer}
@@ -317,7 +319,7 @@ function mine(){renderRail('mine');const D=ME.load();const cont=meRows('cont'),r
  ${recent.length?`<section class="block"><h3>Recently watched</h3><div class="list">${recent.map(meRow).join('')}</div></section>`:''}`}
 function renderRail(active){
  const counts={};for(const c of own){const k=catOf(c);counts[k]=(counts[k]||0)+1}
- rail.innerHTML=`<a href="#home" class="${active==='home'?'on':''}">Overview</a><a href="#mine" class="${active==='mine'?'on':''}">My study${Object.keys(ME.load().notes).length?`<span class="n">${Object.keys(ME.load().notes).length}</span>`:''}</a><a href="#who" class="${active==='who'?'on':''}">Who he is</a><a href="#topics" class="${active==='topics'?'on':''}">Themes</a>`+CATS.map(([k,n])=>`<a href="#${k}" class="${active===k?'on':''}">${n}<span class="n">${counts[k]||0}</span></a>`).join('')+`<a href="#tz" class="${active==='tz'?'on':''}">Tazkiyah Halaqah<span class="n">51</span></a><a href="#years" class="${active==='years'?'on':''}">By year</a>`;
+ rail.innerHTML=`<a href="#home" class="${active==='home'?'on':''}">Overview</a><a href="#who" class="${active==='who'?'on':''}">Who he is</a><a href="#topics" class="${active==='topics'?'on':''}">Themes</a>`+CATS.map(([k,n])=>`<a href="#${k}" class="${active===k?'on':''}">${n}<span class="n">${counts[k]||0}</span></a>`).join('')+`<a href="#tz" class="${active==='tz'?'on':''}">Tazkiyah Halaqah<span class="n">51</span></a><a href="#years" class="${active==='years'?'on':''}">By year</a><a href="#mine" class="${active==='mine'?'on':''}">My study${Object.keys(ME.load().notes).length?`<span class="n">${Object.keys(ME.load().notes).length}</span>`:''}</a>`;
 }
 // ---------- years
 function years(){
@@ -384,7 +386,7 @@ async function video(id,t0){
  main.innerHTML=`<article class="video">
   <div><div id="shead">${c.sn||c.sar?`<div class="surah-head"><span class="ar">سورة ${c.sn?SAR[c.sn]:esc(c.sar)}</span>${c.sn?`<span class="sub">${STR[c.sn]} · ${c.sn}</span>`:''}</div>`:''}</div>${c.s?`<div class="eyebrow"><a href="#s-${slug(c.s)}">${esc(c.s)}</a>${c.ep!=null?' · episode '+c.ep:''}</div>`:`<div class="eyebrow">${CATS.find(x=>x[0]===catOf(c))?.[1]||''}</div>`}<h2 id="vtitle" class="${isAr(title)?'ar':''}">${esc(title)}</h2>
   <div class="meta"><span>${fmtDate(c)}</span><span>${fmtD(c.d)}</span>${c.lang==='ar'?'<span>Arabic</span>':''}${c.sp==='unsure'?'<span>Speaker not confirmed as Sh. Adnan</span>':''}${c.dt?'':`<span class="muted">${esc(c.t)}</span>`}</div></div>
-  ${noEmbed?`<div class="player" id="player" style="position:static"><div class="pbar" style="margin:0"><button type="button" id="popbtn">▶ Play in player window</button><span>Times on this page then play in that same window, so you stay here.</span></div></div>`:`<div class="player" id="player"><div class="frame"><iframe id="ytf" title="${esc(title)}" src="${embed(c.id,t0,!!t0)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div></div>`}
+  ${noEmbed?`<div class="player" id="player" style="position:static"><div class="pbar" style="margin:0"><button type="button" id="popbtn">▶ Play in player window</button><span>Times on this page then play in that same window, so you stay here.</span></div></div>`:`<div id="pmark"></div><div class="player" id="player"><div class="frame"><iframe id="ytf" title="${esc(title)}" src="${embed(c.id,t0,!!t0)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div></div>`}
   <div id="vbody"><p class="status">Loading…</p></div>
  </article>`;
  const body=$('#vbody');
@@ -564,7 +566,7 @@ async function tzRoute(h){
  if(h.startsWith('tz-l-')){const n=+h.slice(5);const l=D.L.find(x=>x.n===n);if(!l){main.innerHTML='<div class="empty">No such lesson.</div>';return}
   const prev=D.L.find(x=>x.n===n-1),next=D.L.find(x=>x.n===n+1);
   main.innerHTML=`<article class="video"><div><div class="eyebrow"><a href="#tz-lessons">Tazkiyah Halaqah · Lessons</a> · lesson ${n}</div><h2>${esc(l.title)}</h2><div class="meta"><span>${esc(l.date)}</span><span>${l.min} min</span></div></div>
-  <div class="player" id="player"><audio id="tza" controls preload="metadata" src="${tzA(n)}"></audio></div>
+  <div id="pmark"></div><div class="player" id="player"><audio id="tza" controls preload="metadata" src="${tzA(n)}"></audio></div>
   <div>${l.obj?.length?`<section class="block prose"><p class="eyebrow">What this lesson sets out to do</p>${tzList(l.obj)}</section>`:''}
   ${l.topics?.length?`<section class="block"><h3>Outline</h3><div class="outline">${l.topics.map(t=>`<div class="tzj" data-at="${t[0]}"><span><b>${esc(t[1])}</b>${esc(t[2]||'')}</span></div>`).join('')}</div></section>`:''}
   ${l.q?.length?`<section class="block"><h3>Quran recited</h3><div class="themelinks">${l.q.map(q=>`<button type="button" class="pill tzq" data-at="${q[0]}">${esc(q[4])} ${q[1]}:${q[2]}${q[3]!==q[2]?'–'+q[3]:''}</button>`).join('')}</div></section>`:''}
@@ -575,7 +577,7 @@ async function tzRoute(h){
  if(h.startsWith('tz-e-')){const e=exById[h.slice(5)];if(!e){main.innerHTML='<div class="empty">No such exercise.</div>';return}
   const u0=e.uses[0];
   main.innerHTML=`<article class="video"><div><div class="eyebrow"><a href="#tz-exercises">Tazkiyah Halaqah · Exercises</a></div><h2>${esc(e.title)}</h2><div class="meta"><span>${e.uses.length>1?'Lessons '+[...new Set(e.uses.map(u=>u.n))].join(', '):'Lesson '+u0.n}</span></div></div>
-  <div class="player" id="player"><audio id="tza" controls preload="metadata" src="${tzA(u0.n)}#t=${u0.t}" data-n="${u0.n}"></audio><div class="pbar"><span id="tzwhich">Lesson ${u0.n}</span><span>Tap a lesson below to hear where it was taught</span></div></div>
+  <div id="pmark"></div><div class="player" id="player"><audio id="tza" controls preload="metadata" src="${tzA(u0.n)}#t=${u0.t}" data-n="${u0.n}"></audio><div class="pbar"><span id="tzwhich">Lesson ${u0.n}</span><span>Tap a lesson below to hear where it was taught</span></div></div>
   <div>${e.instr?`<section class="block prose"><p class="eyebrow">The exercise</p><p><b>${esc(e.instr)}</b></p></section>`:''}
   ${e.uses.map(u=>{const l=D.L.find(x=>x.n===u.n)||{};return `<section class="block"><div class="tzj" data-at="${u.t}" data-n="${u.n}" style="padding:6px 8px;border-radius:6px"><h3>Lesson ${u.n}: ${esc(l.title||'')}</h3><span class="muted">${esc(l.date||'')} · play from where he set it</span></div>
    ${u.instr?`<p style="margin-top:8px">${esc(u.instr)}</p>`:''}
@@ -646,9 +648,9 @@ new MutationObserver(()=>wireJumps(main)).observe(main,{childList:true,subtree:t
 document.addEventListener('click',e=>{if(e.target.dataset&&e.target.dataset.syn)return;const r=e.target.closest('.jump');if(!r)return;const inner=e.target.closest('a');if(inner&&!inner.classList.contains('ts')&&inner.closest('.jump')===r&&!/youtube\.com\/watch/.test(inner.href))return;
  e.preventDefault();e.stopPropagation();document.querySelectorAll('.jump.on').forEach(x=>x.classList.remove('on'));r.classList.add('on');const a=document.createElement('a');a.href=r.dataset.href;a.className='ts';a.dataset.syn='1';r.appendChild(a);a.click();a.remove()},true);
 // player shrinks as you scroll, down to a small floating size
-let _rafP=0;window.addEventListener('scroll',()=>{if(_rafP)return;_rafP=requestAnimationFrame(()=>{_rafP=0;const p=document.getElementById('player');if(!p)return;const k=Math.max(0,Math.min(1,(window.scrollY-40)/240));p.style.setProperty('--pw',k.toFixed(3))})},{passive:true});
+let _rafP=0;window.addEventListener('scroll',()=>{if(_rafP)return;_rafP=requestAnimationFrame(()=>{_rafP=0;const p=document.getElementById('player');if(!p){rail&&rail.classList.remove('docked');return}const wide=innerWidth>860,mk=document.getElementById('pmark');if(wide&&mk&&rail){p.style.setProperty('--pw','0');const th=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--toph'))||74;const dock=mk.getBoundingClientRect().top<th-60;if(dock!==p.classList.contains('dock')){if(dock){mk.style.height=p.offsetHeight+'px';const r=rail.getBoundingClientRect();p.style.setProperty('--dl',r.left+'px');p.style.setProperty('--dw',r.width+'px');p.classList.add('dock');rail.style.setProperty('--dh',p.offsetHeight+'px');rail.classList.add('docked')}else{p.classList.remove('dock');mk.style.height='';rail.classList.remove('docked')}}else if(dock){const r=rail.getBoundingClientRect();p.style.setProperty('--dl',r.left+'px');p.style.setProperty('--dw',r.width+'px')}}else{if(p.classList.contains('dock')){p.classList.remove('dock');if(mk)mk.style.height='';rail&&rail.classList.remove('docked')}const k=Math.max(0,Math.min(1,(window.scrollY-40)/240));p.style.setProperty('--pw',k.toFixed(3))}})},{passive:true});
 const setTop=()=>{const t=document.querySelector('.top');if(t)document.documentElement.style.setProperty('--toph',t.offsetHeight+'px')};
-window.addEventListener('resize',setTop);setTop();
+window.addEventListener('resize',setTop);window.addEventListener('hashchange',()=>{rail&&rail.classList.remove('docked')});setTop();
 $('#foot').textContent=`Catalog of ${catalog.length.toLocaleString()} recordings from the Adnan Rajeh and Muslim Wellness channels · ${own.filter(c=>c.tx).length} transcribed`;
 route();
 })();
