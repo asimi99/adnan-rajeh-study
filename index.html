@@ -71,6 +71,7 @@ section.block{margin-bottom:30px}
 @media (min-width:861px){.player.dock{position:fixed;top:calc(var(--toph,74px) + 14px);left:var(--dl);width:var(--dw);padding:0;margin:0;z-index:6;animation:dockin .18s ease-out}.player.dock .frame{width:100%!important;border-radius:8px}.player.dock audio{width:100%}.rail.docked{padding-top:calc(var(--dh) + 14px)}}
 @keyframes dockin{from{opacity:.3;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .gbtn[hidden],.aor[hidden]{display:none!important}.gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;background:#fff;color:#1f1f1f;font:inherit;font-weight:500;cursor:pointer}.gbtn:hover{background:#f6f8f9}.aor{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:10px 0}.aor::before,.aor::after{content:"";flex:1;height:1px;background:var(--line)}
+@media (min-width:861px){.player.dock iframe{inset:auto;top:-64px;left:0;width:100%;height:calc(100% + 128px);pointer-events:none}.player.dock .frame{cursor:pointer}}
 .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .player .pbar{display:flex;gap:14px;align-items:center;font-size:13px;color:var(--muted);margin-top:6px;flex-wrap:wrap}
 .player .pbar button{font:inherit;font-size:13px;background:none;border:1px solid var(--line);color:var(--fg);border-radius:6px;padding:3px 9px;cursor:pointer}
@@ -233,6 +234,7 @@ a.vref{border-bottom:1px dotted var(--accent);text-decoration:none}
 // ---------- accounts (Supabase): sync ME to the signed-in user's row
 const SB=window.supabase?window.supabase.createClient('https://rxkitwtfgbhgyneapgfx.supabase.co','sb_publishable_a_sszD017JtDTmQ5e_ERLQ_lW9z-e96'):null;
 let USER=null,_pushT=0;
+document.addEventListener('click',e=>{const p=e.target.closest('#player.dock');if(!p||!document.getElementById('ytf'))return;ytCmd(window._yts===1?'pauseVideo':'playVideo')});
 document.addEventListener('click',e=>{if(e.target.closest('#agoogle')&&SB){SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}})}});
 (async function(){
 const $=s=>document.querySelector(s);
@@ -624,7 +626,7 @@ function toPopup(){if(noEmbed)return;noEmbed=true;const p=document.getElementByI
 document.addEventListener('securitypolicyviolation',e=>{if(/youtube/.test(e.blockedURI||''))toPopup()});
 let _lastSave=0;
 window.addEventListener('message',e=>{let host='';try{host=new URL(e.origin).hostname}catch(x){}if(!/youtube(-nocookie)?\.com$/.test(host))return;ytAPI=true;
- let m;try{m=typeof e.data==='string'?JSON.parse(e.data):e.data}catch(x){return}const inf=m&&m.info;if(!inf||inf.currentTime==null)return;
+ let m;try{m=typeof e.data==='string'?JSON.parse(e.data):e.data}catch(x){return}const inf=m&&m.info;if(inf&&inf.playerState!=null)window._yts=inf.playerState;if(!inf||inf.currentTime==null)return;
  const id=location.hash.startsWith('#v-')?location.hash.slice(3).split('~')[0]:null;if(!id)return;
  if(Date.now()-_lastSave>5000&&inf.currentTime>5){_lastSave=Date.now();const old=ME.prog(id);ME.setProg(id,inf.currentTime,inf.duration||(old&&old.d)||(byId[id]&&byId[id].d)||0)}});
 const ytCmd=(f,a=[])=>{const fr=document.getElementById('ytf');fr&&fr.contentWindow&&fr.contentWindow.postMessage(JSON.stringify({event:'command',func:f,args:a}),'*')};
