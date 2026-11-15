@@ -210,11 +210,31 @@ a.vref{border-bottom:1px dotted var(--accent);text-decoration:none}
 @media (max-width:760px){.mm .mid{grid-column:auto}.mm{grid-template-columns:1fr;gap:12px;padding-left:14px;border-left:2px solid var(--accent-soft)}.mm svg.links{display:none}.mm .core{order:-1}}
 .facts h4{font-family:var(--display);font-size:17px;margin:16px 0 6px}
 .outline .side{opacity:.6}
+.rail .rsep{height:1px;background:var(--line);margin:8px 10px}
+@media (max-width:860px){.rail .rsep{display:none}}
+.hero{margin:6px 0 30px}.hero h2{font-size:32px}.hero p{font-size:16px;color:var(--muted);max-width:58ch}
+.tiles{grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.tile{padding:16px;gap:6px;border-radius:10px;background:var(--bg)}.tile .tn{font-family:var(--display);font-weight:600;font-size:17px;color:var(--fg)}.tile span{font-size:13.5px;line-height:1.45}
+.tile.wide{display:grid;max-width:none;background:var(--accent-soft);border-color:transparent}
+.block h3{font-size:13px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:26px 0 10px}
+.block h2{font-size:28px;margin-bottom:6px}.lede{font-size:15.5px}
+.series{background:var(--bg);border-radius:10px;padding:12px 14px;align-items:center;font-weight:500}.series .ar{font-size:18px;color:var(--muted);font-weight:400}
+.yrs{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:14px}.yrs .series{justify-content:center;font-size:17px}
+.list{border-radius:10px}.row{background:var(--bg);padding:12px 14px}.row .t{font-weight:500}
+.list.numbered{counter-reset:ep}.list.numbered .row{grid-template-columns:28px minmax(0,1fr) auto}.list.numbered .row::before{counter-increment:ep;content:counter(ep);color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.list.numbered .row .s{grid-column:2/-1}
+.thbar input{background:var(--bg)}
+.thdom{margin-top:26px}.thdom h3{margin:0 0 10px}
+.thlist{display:flex;flex-wrap:wrap;gap:8px}
+.thitem{padding:8px 14px;border:1px solid var(--line);border-radius:999px;color:var(--fg);font-size:14.5px;background:var(--bg)}.thitem:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
+footer{border-top:0;text-align:center;margin-top:56px;opacity:.8}
+.lec,.verse,.narr div,.outline div,.hit{background:var(--bg)}
+details.sec summary{font-size:18px}
 </style>
 <header class="top">
   <h1><a href="#home">Adnan Rajeh<small>Study of his teaching</small></a></h1>
   <form class="search" id="searchform" role="search">
-    <input id="q" type="search" placeholder="Search every lecture: istiqamah, incorruptibility, raising children…" aria-label="Search" autocomplete="off">
+    <input id="q" type="search" placeholder="Search anything he has said" aria-label="Search" autocomplete="off">
     <button type="submit">Search</button>
   </form>
   <button type="button" id="acct" class="acct">Sign in</button>
@@ -240,16 +260,15 @@ document.addEventListener('click',e=>{if(e.target.closest('#agoogle')&&SB){SB.au
 const $=s=>document.querySelector(s);
 const main=$('#main'), rail=$('#rail');
 const CATS=[
- ['khutbah','Friday Khutbahs','Jummah sermons at the London Muslim Mosque. His own series and standalone sermons; guest khutbahs are listed separately.'],
- ['series','Lecture Series','Multi-part series: Glorious Names of Allah, Attributes of the Prophet, Values of Islam, The Empty Space, Modern Awakening, Facing Disbelief, and more.'],
- ['tazkiyah','Tazkiyah','Weekly spirituality halaqah: Self Honesty, Mortality, Self-Value, The Rituals, and the Tazkiyah Pearls series.'],
- ['ramadan','Ramadan','Nightly Quranic Themes and Reflections, post-fajr dars, Stages of the Hereafter, and pre-Ramadan preparation, year by year.'],
- ['tafseer','Tafseer','Sunday English tafseer surah by surah, A Juz A Day, surah summaries, and the Friday Arabic tafsir halaqah.'],
- ['seerah','Seerah','Saturday seerah halaqah, episode by episode.'],
- ['khaterah','Khaterahs','Short post-salah reminders, grouped into their series. Untitled ones sitting between two episodes of the same series are filed with that series.'],
- ['other','Other Talks','Parenting talks, Hajj and Arafah programs, fiqh of fasting, community events.'],
+ ['khutbah','Friday Khutbahs','His Friday sermons, grouped into the series he preached them in.'],
+ ['series','Lecture Series','Multi-part courses, from the Names of Allah to the Values of Islam.'],
+ ['tazkiyah','Tazkiyah','The weekly halaqah on purifying the self.'],
+ ['tafseer','Tafseer','The Quran explained surah by surah, in English and Arabic.'],
+ ['seerah','Seerah','The life of the Prophet ﷺ, episode by episode.'],
+ ['ramadan','Ramadan','Nightly reflections, post-Fajr lessons and preparation, year by year.'],
+ ['khaterah','Khaterahs','Short reminders after Isha, most built around one hadith.'],
 ];
-const catOf=c=>c.cat.startsWith('ramadan')?'ramadan':c.cat;
+const catOf=c=>c.cat.startsWith('ramadan')?'ramadan':c.cat==='tafseer-ar'?'tafseer':c.cat==='other'?'khaterah':c.cat;
 const STOP=new Set("a an and are as at be been but by for from has have he her his i if in into is it its of on or our so that the their them then there these they this to too us was we were what when where which who will with you your not no can do does did has had just also very more most much such than about after before over under again all any each few other some own same only both because while during out up down off than there here how why me my mine yours his hers ours theirs am being im ive youre theyre weve dont doesnt didnt cant couldnt wouldnt shouldnt isnt arent wasnt werent thats theres whats lets like get got going go come came one two three right okay ok yeah yes now say said says see know think thing things way well really actually even still back mean means kind sort little bit lot people person something anything nothing everything someone anyone everyone always never ever maybe let make made take took give gave want wanted need needed put keep kept look looked find found use used tell told ask asked call called try tried talk talked talking saying speak spoke show shown start started point part first second next last time times day days year years long good bad big small new old great important different same every many much number".split(' '));
 function toks(t){t=(t||'').toLowerCase().replace(/[’'`]/g,'').replace(/[\u064B-\u0652\u0670]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي');return (t.match(/[a-z0-9\u0600-\u06FF]+/g)||[]).filter(w=>w.length>=3&&!STOP.has(w))}
 async function md5bucket(term,NB){const buf=new TextEncoder().encode(term);try{const h=await crypto.subtle.digest('MD5',buf);return Number(BigInt('0x'+[...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join(''))%BigInt(NB))}catch(e){return null}}
@@ -323,37 +342,33 @@ function mine(){renderRail('mine');const D=ME.load();const cont=meRows('cont'),r
  <section class="block"><h3>My reflections <span class="muted mono" style="font-size:12px">${notes.length}</span></h3>${notes.length?`<div class="list">${notes.map(([id,n])=>{const c=byId[id];return `<a class="row" href="#v-${id}"><span class="t">${esc(c?(c.s?(c.lab||c.dt||c.t):(c.dt||c.t)):id)}</span><span class="m">${new Date(n.at).toLocaleDateString()}</span><span class="s">${esc(n.text.slice(0,160))}</span></a>`}).join('')}</div>`:'<p class="muted">Write a reflection on any lecture page and it collects here.</p>'}</section>
  ${recent.length?`<section class="block"><h3>Recently watched</h3><div class="list">${recent.map(meRow).join('')}</div></section>`:''}`}
 function renderRail(active){
- const counts={};for(const c of own){const k=catOf(c);counts[k]=(counts[k]||0)+1}
- rail.innerHTML=`<a href="#home" class="${active==='home'?'on':''}">Overview</a><a href="#who" class="${active==='who'?'on':''}">Who he is</a><a href="#topics" class="${active==='topics'?'on':''}">Themes</a>`+CATS.map(([k,n])=>`<a href="#${k}" class="${active===k?'on':''}">${n}<span class="n">${counts[k]||0}</span></a>`).join('')+`<a href="#tz" class="${active==='tz'?'on':''}">Tazkiyah Halaqah<span class="n">51</span></a><a href="#years" class="${active==='years'?'on':''}">By year</a><a href="#mine" class="${active==='mine'?'on':''}">My study${Object.keys(ME.load().notes).length?`<span class="n">${Object.keys(ME.load().notes).length}</span>`:''}</a>`;
+ const a=(h,k,n)=>`<a href="#${h}" class="${active===k?'on':''}">${n}</a>`;
+ rail.innerHTML=a('home','home','Start here')+a('topics','topics','Themes')+`<span class="rsep"></span>`+CATS.map(([k,n])=>a(k,k,n)).join('')+`<span class="rsep"></span>`+a('years','years','By year')+a('who','who','About the Shaykh')+a('tz','tz','Tazkiyah Halaqah')+a('mine','mine','My study');
 }
 // ---------- years
 function years(){
  renderRail('years');
- const byY={};for(const c of own){if(c.y)(byY[c.y]=byY[c.y]||[]).push(c)}
- const ys=Object.keys(byY).map(Number).sort((a,b)=>b-a);
- const hours=c=>Math.round(c.reduce((s,x)=>s+(x.d||0),0)/3600);
- main.innerHTML=`<section class="block"><h2>By year</h2><p class="lede">Dates are exact for transcribed recordings and approximate (from the upload age) for the rest.</p>
- <div class="tiles">${ys.map(y=>`<a class="tile" href="#y-${y}"><b>${y}</b><span>${byY[y].length} recordings</span><i>${hours(byY[y])} h</i></a>`).join('')}</div></section>`;
+ const ys=[...new Set(own.map(c=>c.y).filter(Boolean))].sort((a,b)=>b-a);
+ main.innerHTML=`<section class="block"><h2>By year</h2><div class="yrs">${ys.map(y=>`<a class="series" href="#y-${y}">${y}</a>`).join('')}</div></section>`;
 }
 function year(y){
  renderRail('years');
  const items=own.filter(c=>c.y===y).sort((a,b)=>a.i-b.i);
  if(!items.length){main.innerHTML='<div class="empty">Nothing recorded that year.</div>';return}
  const groups={};for(const c of items){const k=catOf(c);(groups[k]=groups[k]||[]).push(c)}
- main.innerHTML=`<section class="block"><div class="eyebrow">By year</div><h2>${y}</h2><p class="lede">${items.length} recordings, newest first.</p>
- ${CATS.filter(([k])=>groups[k]).map(([k,n])=>`<h3>${n} <span class="muted mono" style="font-size:12px">${groups[k].length}</span></h3><div class="list">${groups[k].map(rowHtml).join('')}</div>`).join('')}</section>`;
+ main.innerHTML=`<section class="block"><div class="eyebrow"><a href="#years">By year</a></div><h2>${y}</h2>
+ ${CATS.filter(([k])=>groups[k]).map(([k,n])=>{const ser=[...new Set(groups[k].filter(c=>c.s).map(c=>c.s))];const loose=groups[k].filter(c=>!c.s);return `<h3>${n}</h3>${ser.length?`<div class="serieslist">${ser.map(x=>`<a class="series" href="#s-${slug(x)}">${esc(x)}</a>`).join('')}</div>`:''}${loose.length?`<div class="list" style="margin-top:8px">${loose.map(rowHtml).join('')}</div>`:''}`}).join('')}</section>`;
 }
 // ---------- home
 function home(){
  renderRail('home');
- const hours=c=>Math.round(c.reduce((s,x)=>s+(x.d||0),0)/3600);
- const txN=own.filter(c=>c.tx).length;
- const latest=own.filter(c=>c.cat!=='khaterah').slice(0,12);
- const cont=meRows('cont').slice(0,6);
- main.innerHTML=(cont.length?`<section class="block"><h3>Continue watching</h3><div class="list">${cont.map(meRow).join('')}</div><p style="margin-top:8px"><a href="#mine">All my study →</a></p></section>`:'')+`<div class="hero"><div class="eyebrow">Sh. Adnan Rajeh · London, Ontario</div><h2>Every lecture, sermon and halaqah, in one place</h2><p>${own.length.toLocaleString()} recordings from both channels, ${hours(own).toLocaleString()} hours, 2018 to now. Search runs across the ${txN} transcribed lectures and jumps to the exact minute on YouTube.</p></div>
- <div class="tiles">${CATS.map(([k,n])=>{const items=own.filter(c=>catOf(c)===k);return `<a class="tile" href="#${k}"><b>${items.length}</b><span>${n}</span><i>${hours(items)} h</i></a>`}).join('')}</div>`;
+ const cont=meRows('cont').slice(0,4);
+ main.innerHTML=`<div class="hero"><h2>Learn from Sh. Adnan Rajeh</h2><p>His khutbahs, lessons and reminders, organised so you can study a subject from start to finish or just browse. Tap any line of a lecture's notes and the video jumps to that moment.</p></div>
+ ${cont.length?`<section class="block"><h3>Continue watching</h3><div class="list">${cont.map(meRow).join('')}</div></section>`:''}
+ <section class="block"><h3>Study by subject</h3><a class="tile wide" href="#topics"><span class="tn">Themes</span><span>What he teaches on patience, marriage, purpose, justice and a hundred other subjects, with every lecture where it comes up.</span></a></section>
+ <section class="block"><h3>Browse his teaching</h3><div class="tiles">${CATS.map(([k,n,d])=>`<a class="tile" href="#${k}"><span class="tn">${n}</span><span>${d}</span></a>`).join('')}</div></section>`;
 }
-function rowHtml(c){const title=(c.s?(c.lab||c.dt||c.t):(c.dt||c.t));const showSub=c.s&&!title.toLowerCase().startsWith(c.s.toLowerCase());return `<a class="row" href="#v-${c.id}"><span class="t ${isAr(title)?'ar':''}">${esc(title)}</span><span class="m">${fmtD(c.d)}${c.date||c.ad?' · '+fmtDate(c):''}</span>${showSub?`<span class="s">${esc(c.s)}${c.ep!=null?' · '+c.ep:''}</span>`:''}</a>`}
+function rowHtml(c){const title=(c.s?(c.lab||c.dt||c.t):(c.dt||c.t));const showSub=c.s&&!title.toLowerCase().startsWith(c.s.toLowerCase())&&!location.hash.startsWith('#s-');return `<a class="row" href="#v-${c.id}"><span class="t ${isAr(title)?'ar':''}">${esc(title)}</span><span class="m">${fmtD(c.d)}</span>${showSub?`<span class="s">${esc(c.s)}</span>`:''}</a>`}
 // ---------- category
 function category(k){
  renderRail(k);
@@ -361,15 +376,24 @@ function category(k){
  const items=own.filter(c=>catOf(c)===k);
  const groups={};const standalone=[];
  for(const c of items){if(c.s)(groups[c.s]=groups[c.s]||[]).push(c);else standalone.push(c)}
- let order=Object.entries(groups);
- if(k==='ramadan'){order.sort((a,b)=>b[0].localeCompare(a[0]))}
- else if(k==='tafseer'||k==='tazkiyah'){order.sort((a,b)=>b[1].length-a[1].length)}
- else{order.sort((a,b)=>Math.min(...a[1].map(x=>x.i))-Math.min(...b[1].map(x=>x.i)))}
- const guests=k==='khutbah'?catalog.filter(c=>c.cat==='khutbah'&&c.g):[];
- main.innerHTML=`<section class="block"><h2>${name}</h2><p class="lede">${desc}</p>
-  <div class="serieslist">${order.map(([s,arr])=>{const sn=arr.find(x=>x.sn)?.sn;return `<a class="series" href="#s-${slug(s)}"><span class="${isAr(s)?'ar':''}">${sn?`<span class="ar" style="font-size:18px;margin-left:8px;float:right">${SAR[sn]}</span>`:''}${esc(s)}</span><span class="n">${arr.length}</span></a>`}).join('')}</div>
-  ${standalone.length?`<h3>${k==='khaterah'?'Untitled reminders, by date':'Standalone'}</h3><div class="list">${standalone.map(rowHtml).join('')}</div>`:''}
-  ${guests.length?`<h3>Guest khutbahs on the channel</h3><div class="list">${guests.map(rowHtml).join('')}</div>`:''}
+ const newest=arr=>Math.min(...arr.map(x=>x.i));
+ const card=([s,arr])=>{const sn=(s.includes('Surat ')&&arr.find(x=>x.sn)?.sn)||0;return `<a class="series" href="#s-${slug(s)}"><span>${esc(s.replace(/^(Tafseer|Arabic Tafsir): Surat /,''))}</span>${sn?`<span class="ar">${SAR[sn]}</span>`:''}</a>`};
+ const sec=(title,list)=>list.length?`${title?`<h3>${title}</h3>`:''}<div class="serieslist">${list.map(card).join('')}</div>`:'';
+ let order=Object.entries(groups),body='';
+ if(k==='tafseer'){
+  const bySn=(a,b)=>(a[1].find(x=>x.sn)?.sn||999)-(b[1].find(x=>x.sn)?.sn||999);
+  const en=order.filter(([s])=>s.startsWith('Tafseer: Surat ')).sort(bySn),ar=order.filter(([s])=>s.startsWith('Arabic Tafsir: ')).sort(bySn),rest=order.filter(([s])=>!s.startsWith('Tafseer: Surat ')&&!s.startsWith('Arabic Tafsir: '));
+  body=sec('Overviews',rest)+sec('Surah by surah',en)+sec('Arabic tafsir, surah by surah',ar);
+ }else if(k==='ramadan'){
+  const yr=s=>(s.match(/20\d\d/)||['0'])[0];const ys=[...new Set(order.map(([s])=>yr(s)))].sort().reverse();
+  body=ys.map(y=>sec(y==='0'?'Other':'Ramadan '+y,order.filter(([s])=>yr(s)===y).sort((a,b)=>a[0].localeCompare(b[0])))).join('');
+ }else{
+  order.sort((a,b)=>newest(a[1])-newest(b[1]));
+  if(k==='khaterah'||k==='khutbah'||k==='series'){const yOf=arr=>Math.max(...arr.map(x=>x.y||0));const ys=[...new Set(order.map(([,a])=>yOf(a)))].sort().reverse();body=ys.map(y=>sec(String(y||''),order.filter(([,a])=>yOf(a)===y))).join('')}
+  else body=sec('',order);
+ }
+ main.innerHTML=`<section class="block"><h2>${name}</h2><p class="lede">${desc}</p>${body}
+  ${standalone.length?`<h3>Single talks</h3><div class="list">${standalone.map(rowHtml).join('')}</div>`:''}
  </section>`;
 }
 // ---------- series
@@ -379,9 +403,10 @@ function series(k){
  const items=[...g.items];
  const hasEp=items.filter(x=>x.ep!=null).length>items.length/2;
  if(hasEp)items.sort((a,b)=>(a.ep??1e9)-(b.ep??1e9)||b.i-a.i);else items.sort((a,b)=>b.i-a.i);
+ const _ser=g.name;
  const hours=Math.round(items.reduce((s,x)=>s+(x.d||0),0)/3600*10)/10;
  const sn=items.find(x=>x.sn)?.sn,sar=items.find(x=>x.sar)?.sar;
- main.innerHTML=`<section class="block"><div class="eyebrow">${CATS.find(x=>x[0]===g.cat)[1]}</div>${sn||sar?`<div class="surah-head"><span class="ar">سورة ${sn?SAR[sn]:esc(sar)}</span>${sn?`<span class="sub">${STR[sn]} · ${sn}</span>`:''}</div>`:''}<h2 class="${isAr(g.name)?'ar':''}">${esc(g.name)}</h2><p class="lede">${items.length} recordings · ${hours} h${hasEp?' · in episode order':' · oldest first'}</p><div class="list">${items.map(rowHtml).join('')}</div></section>`;
+ main.innerHTML=`<section class="block"><div class="eyebrow">${CATS.find(x=>x[0]===g.cat)[1]}</div>${sn||sar?`<div class="surah-head"><span class="ar">سورة ${sn?SAR[sn]:esc(sar)}</span>${sn?`<span class="sub">${STR[sn]} · ${sn}</span>`:''}</div>`:''}<h2 class="${isAr(g.name)?'ar':''}">${esc(g.name)}</h2><div class="list numbered">${items.map(rowHtml).join('')}</div></section>`;
 }
 // ---------- video
 async function video(id,t0){
@@ -390,7 +415,7 @@ async function video(id,t0){
  const title=(c.s?(c.lab||c.dt||c.t):(c.dt||c.t));
  main.innerHTML=`<article class="video">
   <div><div id="shead">${c.sn||c.sar?`<div class="surah-head"><span class="ar">سورة ${c.sn?SAR[c.sn]:esc(c.sar)}</span>${c.sn?`<span class="sub">${STR[c.sn]} · ${c.sn}</span>`:''}</div>`:''}</div>${c.s?`<div class="eyebrow"><a href="#s-${slug(c.s)}">${esc(c.s)}</a>${c.ep!=null?' · episode '+c.ep:''}</div>`:`<div class="eyebrow">${CATS.find(x=>x[0]===catOf(c))?.[1]||''}</div>`}<h2 id="vtitle" class="${isAr(title)?'ar':''}">${esc(title)}</h2>
-  <div class="meta"><span>${fmtDate(c)}</span><span>${fmtD(c.d)}</span>${c.lang==='ar'?'<span>Arabic</span>':''}${c.sp==='unsure'?'<span>Speaker not confirmed as Sh. Adnan</span>':''}${c.dt?'':`<span class="muted">${esc(c.t)}</span>`}</div></div>
+  <div class="meta"><span>${fmtDate(c)}</span><span>${fmtD(c.d)}</span>${c.lang==='ar'?'<span>Arabic</span>':''}${c.sp==='unsure'?'<span>Speaker not confirmed as Sh. Adnan</span>':''}</div></div>
   ${noEmbed?`<div class="player" id="player" style="position:static"><div class="pbar" style="margin:0"><button type="button" id="popbtn">▶ Play in player window</button><span>Times on this page then play in that same window, so you stay here.</span></div></div>`:`<div id="pmark"></div><div class="player" id="player"><div class="frame"><iframe id="ytf" title="${esc(title)}" src="${embed(c.id,t0,!!t0)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div></div>`}
   <div id="vbody"><p class="status">Loading…</p></div>
  </article>`;
@@ -400,9 +425,9 @@ async function video(id,t0){
  const D=await getDocs();const d=D.find(x=>x.id===id);const [sh,N,T]=await Promise.all([getShard(d.sh),getNotes(d.sh),getThemes().catch(()=>null)]);const rec=sh[id];const n=N[id];
  const ch=(rec.ch||[]).filter(x=>x[0]!=null);const V=Object.assign({},T?T.verses:{},(n&&n.vt)||{});const tlabel=s=>(T&&T.themes.find(x=>x.slug===s)?.label)||s.replace(/^new:/,'');
  const noteHtml=n?`${n.speaker==='guest'?`<div class="empty">Speaker appears to be a guest, not Sh. Adnan: ${esc(n.speaker_note||'')}</div>`:''}
-  ${n.hadith?.length?((byId[id]&&byId[id].cat==='khaterah'&&n.hadith.some(h=>h.full))?`<section class="block narrtop"><h3>Narrations</h3><div class="narr">${n.hadith.map(h=>{const f=h.full;if(f&&(f.full_ar||f.ar_block))return `<div class="hfull"><a class="ts" href="${yt(id,h.start)}" target="_blank" rel="noopener">${fmtT(h.start)}</a><p class="ar">${esc(f.full_ar||f.ar_block)}</p><p>${esc(f.full_en||f.en_block||'')}</p><div class="src">${esc(f.grade||'')}${f.status==='partial'?' · chain partly found':''}${(f.sources||[]).slice(0,1).map(u=>` · <a href="${esc(u)}" target="_blank" rel="noopener">Source</a>`).join('')}</div></div>`;return `<div><a class="ts" href="${yt(id,h.start)}" target="_blank" rel="noopener">${fmtT(h.start)}</a><span>${esc(h.gist)}${h.source?`<span class="src"> · ${esc(h.source)}</span>`:''}</span></div>`}).join('')}</div></section>`:`<details class="sec narrbrief"><summary>Narrations <span class="muted mono" style="font-size:12px">${n.hadith.length}</span></summary><div class="narr">${n.hadith.map(h=>{const f=h.full;const cut=x=>{x=String(x||'');return x.length>220?x.slice(0,217).replace(/\s+\S*$/,'')+'…':x};return `<div><a class="ts" href="${yt(id,h.start)}" target="_blank" rel="noopener">${fmtT(h.start)}</a><span>${f&&f.ar_block?`<span class="nar">${esc(cut(f.ar_block))}</span>`:''}<span class="nen">${esc(cut(f&&f.en_block?f.en_block:h.gist))}</span></span></div>`}).join('')}</div></details>`):''}
+  ${n.hadith?.length?((byId[id]&&byId[id].cat==='khaterah'&&n.hadith.some(h=>h.full))?`<section class="block narrtop"><h3>Narrations</h3><div class="narr">${n.hadith.map(h=>{const f=h.full;if(f&&(f.full_ar||f.ar_block))return `<div class="hfull"><a class="ts" href="${yt(id,h.start)}" target="_blank" rel="noopener">${fmtT(h.start)}</a><p class="ar">${esc(f.full_ar||f.ar_block)}</p><p>${esc(f.full_en||f.en_block||'')}</p><div class="src">${esc(f.grade||'')}${f.status==='partial'?' · chain partly found':''}${(f.sources||[]).slice(0,1).map(u=>` · <a href="${esc(u)}" target="_blank" rel="noopener">Source</a>`).join('')}</div></div>`;return `<div><a class="ts" href="${yt(id,h.start)}" target="_blank" rel="noopener">${fmtT(h.start)}</a><span>${esc(h.gist)}${h.source?`<span class="src"> · ${esc(h.source)}</span>`:''}</span></div>`}).join('')}</div></section>`:`<details class="sec narrbrief"><summary>Narrations</summary><div class="narr">${n.hadith.map(h=>{const f=h.full;const cut=x=>{x=String(x||'');return x.length>220?x.slice(0,217).replace(/\s+\S*$/,'')+'…':x};return `<div><a class="ts" href="${yt(id,h.start)}" target="_blank" rel="noopener">${fmtT(h.start)}</a><span>${f&&f.ar_block?`<span class="nar">${esc(cut(f.ar_block))}</span>`:''}<span class="nen">${esc(cut(f&&f.en_block?f.en_block:h.gist))}</span></span></div>`}).join('')}</div></details>`):''}
   <section class="block prose"><p class="eyebrow">In one line</p><p><b>${esc(n.one_line||'')}</b></p><p class="eyebrow">Summary</p>${(n.summary||'').split(/\n\n+/).map(p=>`<p>${esc(p)}</p>`).join('')}</section>
-  ${n.themes?.length?`<section class="block"><h3>Themes in this lecture</h3><div class="themelinks">${[...new Map(n.themes.map(t=>[t.theme,t])).values()].map(t=>`<a class="pill ${t.weight===3?'big':''}" href="#t-${tslug(t.theme)}">${esc(tlabel(t.theme))}</a>`).join('')}</div></section>`:''}
+  ${n.themes?.length?`<section class="block"><h3>Themes</h3><div class="themelinks">${[...new Map(n.themes.map(t=>[t.theme,t])).values()].filter(t=>!T||T.themes.some(x=>x.slug===t.theme)).map(t=>`<a class="pill ${t.weight===3?'big':''}" href="#t-${tslug(t.theme)}">${esc(tlabel(t.theme))}</a>`).join('')}</div></section>`:''}
   ${n.outline?.length?`<section class="block"><h3>Outline</h3><div class="outline">${n.outline.map(o=>`<div class="${['Opening','Outro','Interlude'].includes(o.heading)?'side':''}"><a class="ts" href="${yt(id,o.start)}" target="_blank" rel="noopener">${fmtT(o.start)} – ${fmtT(o.end)}</a><span>${o.verses?verseLabel(o.verses):''}<b>${esc(o.heading)}</b>${esc(o.gist||'')}</span></div>`).join('')}</div></section>`:''}
   ${n.vck?.length?`<details class="sec" open><summary>Verses he explains <span class="muted mono" style="font-size:12px">${esc(n.vc||'')}</span></summary><div>${n.vck.filter(k=>V[k]).map(k=>{const seg=(n.outline||[]).find(o=>String(o.verses||'').split(',').some(r=>{const m=r.trim().match(/^(\d+):(\d+)(?:-(\d+))?$/);if(!m)return false;const [s,a]=k.split(':').map(Number);return +m[1]===s&&a>=+m[2]&&a<=+(m[3]||m[2])}));return `<div class="verse"><div class="ref">${verseLabel(k)}${seg?` <a class="ts" href="${yt(id,seg.start)}" target="_blank" rel="noopener">${fmtT(seg.start)}</a> ${esc(seg.heading)}`:''}</div><div class="ar">${esc(V[k].ar)}</div><div class="en">${esc(V[k].en)}</div></div>`}).join('')}</div></details>`:''}
   
@@ -475,22 +500,18 @@ function pillHtml(t,big){return `<a class="pill ${big?'big':''}" href="#t-${tslu
 async function topics(){
  renderRail('topics');
  const T=await getThemes();const by=Object.fromEntries(T.themes.map(t=>[t.slug,t]));
- const dom={};T.domains.forEach(d=>d.themes.forEach(s=>{if(!dom[s])dom[s]=d.name}));
- const doms=T.domains.filter(d=>d.themes.some(s=>by[s]));
- let cur='all',sort='n',q='';
- main.innerHTML=`<section class="block"><h2>Themes</h2><p class="lede">${T.themes.length} subjects he returns to across ${T.noted} lectures. Open one for what he teaches on it, the verses and narrations he uses, and every moment it comes up.</p>
-  <div class="thbar"><input id="thq" type="search" placeholder="Find a theme: patience, marriage, hypocrisy…" autocomplete="off"><select id="thsort"><option value="n">Most covered</option><option value="az">A to Z</option></select></div>
-  <div class="thchips" id="thchips"><button data-d="all" class="on">All</button>${doms.map(d=>`<button data-d="${esc(d.name)}">${esc(d.name.replace(/^Other recurring themes$/,'Other'))}</button>`).join('')}</div>
+ const doms=T.domains.map(d=>({name:d.name.replace(/^The self: /,'').replace(/^./,c=>c.toUpperCase()),ts:d.themes.map(s=>by[s]).filter(Boolean).sort((a,b)=>b.n-a.n)})).filter(d=>d.ts.length);
+ const short=t=>t.label.split(/[:(]/)[0].replace(/\s+(vs|and other)\s.*$/,'').trim();
+ main.innerHTML=`<section class="block"><h2>Themes</h2><p class="lede">Pick a subject to read what he teaches on it and open every lecture where he takes it up.</p>
+  <div class="thbar"><input id="thq" type="search" placeholder="Find a theme: patience, marriage, hypocrisy…" autocomplete="off"></div>
   <div id="thgrid"></div></section>`;
- const draw=()=>{const ql=q.toLowerCase();let xs=T.themes.filter(t=>(cur==='all'||dom[t.slug]===cur)&&(!ql||t.label.toLowerCase().includes(ql)||t.slug.includes(ql)));
-  xs.sort(sort==='az'?(a,b)=>a.label.localeCompare(b.label):(a,b)=>b.n-a.n);
-  const card=t=>`<a class="thcard" href="#t-${tslug(t.slug)}"><span class="tt">${esc(t.label)}</span><span class="n">${t.n}</span><span class="sub">${t.quran?.length?t.quran.length+' verses':''}${t.quran?.length&&t.hadith?.length?' · ':''}${t.hadith?.length?t.hadith.length+' narrations':''}</span></a>`;
-  if(cur==='all'&&!ql&&sort==='n'){$('#thgrid').innerHTML=doms.map(d=>{const ts=d.themes.map(s=>by[s]).filter(Boolean).sort((a,b)=>b.n-a.n);return `<h3 class="thh">${esc(d.name)} <span class="muted mono" style="font-size:12px">${ts.length}</span></h3><div class="thgrid">${ts.map(card).join('')}</div>`}).join('')}
-  else $('#thgrid').innerHTML=xs.length?`<div class="thgrid">${xs.map(card).join('')}</div>`:'<div class="empty">No theme matches that. Try the search bar at the top for any word he has said.</div>'};
- $('#thq').addEventListener('input',e=>{q=e.target.value.trim();draw()});
- $('#thsort').addEventListener('change',e=>{sort=e.target.value;draw()});
- $('#thchips').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cur=b.dataset.d;$('#thchips').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));draw()});
- draw();
+ const item=t=>`<a class="thitem" href="#t-${tslug(t.slug)}" title="${esc(t.label)}">${esc(short(t))}</a>`;
+ const draw=q=>{const ql=q.toLowerCase();
+  if(!ql){$('#thgrid').innerHTML=doms.map(d=>`<div class="thdom"><h3>${esc(d.name)}</h3><div class="thlist">${d.ts.map(item).join('')}</div></div>`).join('');return}
+  const xs=T.themes.filter(t=>t.label.toLowerCase().includes(ql)||t.slug.includes(ql));
+  $('#thgrid').innerHTML=xs.length?`<div class="thlist">${xs.map(item).join('')}</div>`:'<div class="empty">No theme by that name. The search bar at the top finds any word he has said.</div>'};
+ $('#thq').addEventListener('input',e=>draw(e.target.value.trim()));
+ draw('');
 }
 function verseHtml(q,V,withCites){
  const keys=q.keys||[];
@@ -505,14 +526,14 @@ async function topic(slugKey){
  renderRail('topics');const V=T.verses;
  const dates=t.lectures.map(l=>l.date).filter(Boolean).sort();
  const synth=t.synth;
- const lecHtml=l=>`<div class="lec ${l.w===3?'w3':''}"><div class="head"><a href="#v-${l.id}" class="${isAr(l.title)?'ar':''}">${esc(l.title)}</a><span class="m">${l.series?esc(l.series)+(l.ep!=null?' · '+l.ep:'')+' · ':''}${l.date?fmtDate({date:l.date.length>7?l.date:null,ad:l.date.length<=7?l.date:null}):''}</span></div>${l.spans.map(s=>`<div class="span"><a class="ts" href="${yt(l.id,s.start)}" target="_blank" rel="noopener">${fmtT(s.start)} – ${fmtT(s.end)}</a><span>${esc(s.note||'')}</span></div>`).join('')}</div>`;
- main.innerHTML=`<article class="topic"><div class="eyebrow"><a href="#topics">Themes</a></div><h2>${esc(t.label)}</h2><p class="lede">${t.n} lectures${dates.length?` · ${dates[0].slice(0,4)} to ${dates[dates.length-1].slice(0,4)}`:''}. Lectures where this is the main subject are marked with a green edge.</p>
+ const lecHtml=l=>`<div class="lec ${l.w===3?'w3':''}"><div class="head"><a href="#v-${l.id}" class="${isAr(l.title)?'ar':''}">${esc(l.title)}</a><span class="m">${l.series?esc(l.series):''}${l.series&&l.date?' · ':''}${l.date?fmtDate({date:l.date.length>7?l.date:null,ad:l.date.length<=7?l.date:null}):''}</span></div>${l.spans.map(s=>`<div class="span"><a class="ts" href="${yt(l.id,s.start)}" target="_blank" rel="noopener">${fmtT(s.start)} – ${fmtT(s.end)}</a><span>${esc(s.note||'')}</span></div>`).join('')}</div>`;
+ main.innerHTML=`<article class="topic"><div class="eyebrow"><a href="#topics">Themes</a></div><h2>${esc(t.label)}</h2>
  ${synth?`<section class="block prose synth"><h3>What he teaches</h3>${(synth.summary||'').split(/\n\n+/).map(p=>`<p>${vrefText(p,V)}</p>`).join('')}${(synth.sections||[]).length>1?`<p class="eyebrow" style="margin-top:12px">On this page</p><ol class="toc">${synth.sections.map((x,i)=>`<li><a href="javascript:void 0" onclick="document.getElementById('sx${i}').scrollIntoView({behavior:'smooth'})">${esc(x.heading)}</a></li>`).join('')}</ol>`:''}</section>
  ${(synth.sections||[]).map((x,i)=>`<section class="block synth" id="sx${i}"><h3 class="big">${esc(x.heading)}</h3>${x.intro?`<p class="lede">${esc(x.intro)}</p>`:''}${(x.body||'').split(/\n\n+/).filter(Boolean).map(p=>`<p>${esc(p)}</p>`).join('')}${(x.subs||[]).map(u=>`<h4>${esc(u.heading)}</h4><ul class="pts">${(u.points||[]).map(pt=>`<li>${vrefText(pt.text,V)} ${refsHtml(pt.refs)}</li>`).join('')}</ul>`).join('')}</section>`).join('')}
- ${synth.khutbah_seeds?.length?`<details class="sec" open><summary>Khutbah angles from his material</summary><ul class="pts">${synth.khutbah_seeds.map(k=>`<li>${esc(k.text)} ${refsHtml(k.refs)}</li>`).join('')}</ul></details>`:''}`:`<section class="block"><p class="status">The written synthesis for this theme is still being prepared. The verses, narrations and every lecture moment below are already complete for the ${T.noted} lectures annotated so far.</p></section>`}
- <details class="sec" open><summary>Every time he takes it up <span class="muted mono" style="font-size:12px">${t.n}</span></summary><div>${t.lectures.map(lecHtml).join('')}</div></details>
- ${t.quran.length?`<details class="sec" open><summary>Verses he builds on <span class="muted mono" style="font-size:12px">${t.quran.length}</span></summary><div>${t.quran.map(q=>verseHtml(q,V,true)).join('')}</div></details>`:''}
- ${t.hadith.length?`<details class="sec" open><summary>Narrations he brings <span class="muted mono" style="font-size:12px">${t.hadith.length}</span></summary><div class="narr">${t.hadith.map(h=>{const l=byId[h.id];return `<div>${esc(h.gist)}<div class="src">${h.source?esc(h.source)+' · ':''}<a class="ts" href="${yt(h.id,h.start)}" target="_blank" rel="noopener">${fmtT(h.start)}</a> <a href="#v-${h.id}">${esc(l?(l.s?(l.lab||l.dt||l.t):(l.dt||l.t)):h.id)}</a></div></div>`}).join('')}</div></details>`:''}
+ ${synth.khutbah_seeds?.length?`<details class="sec" open><summary>Khutbah angles from his material</summary><ul class="pts">${synth.khutbah_seeds.map(k=>`<li>${esc(k.text)} ${refsHtml(k.refs)}</li>`).join('')}</ul></details>`:''}`:''}
+ <details class="sec" open><summary>Lectures</summary><div>${t.lectures.map(lecHtml).join('')}</div></details>
+ ${t.quran.length?`<details class="sec" open><summary>Verses</summary><div>${t.quran.map(q=>verseHtml(q,V,true)).join('')}</div></details>`:''}
+ ${t.hadith.length?`<details class="sec" open><summary>Narrations</summary><div class="narr">${t.hadith.map(h=>{const l=byId[h.id];return `<div>${esc(h.gist)}<div class="src">${h.source?esc(h.source)+' · ':''}<a class="ts" href="${yt(h.id,h.start)}" target="_blank" rel="noopener">${fmtT(h.start)}</a> <a href="#v-${h.id}">${esc(l?(l.s?(l.lab||l.dt||l.t):(l.dt||l.t)):h.id)}</a></div></div>`}).join('')}</div></details>`:''}
  
  </article>`;
 }
@@ -656,7 +677,7 @@ document.addEventListener('click',e=>{if(e.target.dataset&&e.target.dataset.syn)
 let _rafP=0;window.addEventListener('scroll',()=>{if(_rafP)return;_rafP=requestAnimationFrame(()=>{_rafP=0;const p=document.getElementById('player');if(!p){rail&&rail.classList.remove('docked');return}const wide=innerWidth>860,mk=document.getElementById('pmark');if(wide&&mk&&rail){p.style.setProperty('--pw','0');const th=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--toph'))||74;const dock=mk.getBoundingClientRect().top<th-60;if(dock!==p.classList.contains('dock')){if(dock){mk.style.height=p.offsetHeight+'px';const r=rail.getBoundingClientRect();p.style.setProperty('--dl',r.left+'px');p.style.setProperty('--dw',r.width+'px');p.classList.add('dock');rail.style.setProperty('--dh',p.offsetHeight+'px');rail.classList.add('docked')}else{p.classList.remove('dock');mk.style.height='';rail.classList.remove('docked')}}else if(dock){const r=rail.getBoundingClientRect();p.style.setProperty('--dl',r.left+'px');p.style.setProperty('--dw',r.width+'px')}}else{if(p.classList.contains('dock')){p.classList.remove('dock');if(mk)mk.style.height='';rail&&rail.classList.remove('docked')}const k=Math.max(0,Math.min(1,(window.scrollY-40)/240));p.style.setProperty('--pw',k.toFixed(3))}})},{passive:true});
 const setTop=()=>{const t=document.querySelector('.top');if(t)document.documentElement.style.setProperty('--toph',t.offsetHeight+'px')};
 window.addEventListener('resize',setTop);window.addEventListener('hashchange',()=>{rail&&rail.classList.remove('docked')});setTop();
-$('#foot').textContent=`Catalog of ${catalog.length.toLocaleString()} recordings from the Adnan Rajeh and Muslim Wellness channels · ${own.filter(c=>c.tx).length} transcribed`;
+$('#foot').textContent='Quran translation: Saheeh International';
 route();
 })();
 </script></body></html>
