@@ -304,7 +304,7 @@ document.addEventListener('submit',async e=>{if(e.target.id!=='authform')return;
  const r=f.dataset.mode==='up'?await SB.auth.signUp({email:em,password:pw}):await SB.auth.signInWithPassword({email:em,password:pw});
  if(r.error){er.textContent=r.error.message;return}er.textContent='';document.getElementById('authbox').hidden=true;document.getElementById('apass').value=''});
 const pct=p=>p&&p.d?Math.min(100,Math.round(p.t/p.d*100)):0;
-function meRows(kind){const D=ME.load();let xs=Object.entries(D.prog).filter(([id])=>byId[id]).map(([id,p])=>({c:byId[id],p}));
+function meRows(kind){const D=ME.load();let xs=Object.entries(D.prog).filter(([id])=>byId[id]&&!byId[id].g).map(([id,p])=>({c:byId[id],p}));
  if(kind==='cont')xs=xs.filter(x=>x.p.t>30&&(!x.p.d||x.p.t<x.p.d-60));
  return xs.sort((a,b)=>b.p.at-a.p.at)}
 const meRow=x=>`<a class="row" href="#v-${x.c.id}~${x.p.t}"><span class="t">${esc(x.c.s?(x.c.lab||x.c.dt||x.c.t):(x.c.dt||x.c.t))}</span><span class="m">${fmtT(x.p.t)}${x.p.d?' / '+fmtT(x.p.d):''}</span><span class="s">${x.c.s?esc(x.c.s):''}</span><i class="bar"><b style="width:${pct(x.p)}%"></b></i></a>`;
