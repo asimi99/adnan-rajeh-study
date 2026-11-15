@@ -75,7 +75,10 @@ main{min-width:0;display:grid;grid-template-columns:minmax(0,1fr);gap:22px;align
 .note{font-size:13.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 12px;max-width:72ch}
 
 .secs{display:grid;border-top:1px solid var(--line)}
-.sec{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;padding:13px 0;border-bottom:1px solid var(--line)}
+.sec{position:relative;display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;padding:13px 8px;margin-inline:-8px;border-bottom:1px solid var(--line);border-radius:6px;cursor:pointer}
+.sec:hover{background:var(--surface)}
+.sec .ts::after{content:"";position:absolute;inset:0}
+.sec .pg a{position:relative;z-index:1}
 .sec.cur{background:linear-gradient(90deg,var(--accent-soft),transparent 70%)}
 .ts{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;align-self:start;justify-self:start;padding:3px 8px;border-radius:6px;border:0;white-space:nowrap}
 .ts:hover{text-decoration:none;filter:brightness(.95)}
@@ -97,6 +100,7 @@ main>section{min-width:0}
 .tlist a{display:grid;grid-template-columns:30px minmax(0,1fr);gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--raised);color:var(--fg);font-size:14px}
 .tlist a:hover{border-color:var(--accent);text-decoration:none}
 .tlist .n{font-family:var(--mono);color:var(--muted);font-size:12.5px;padding-top:1px}
+.pdfv{width:100%;height:calc(100vh - var(--toph,70px) - 120px);min-height:480px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
 .pager{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:14px}
 .hits{display:grid;gap:8px}
 .hit{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--raised)}
@@ -127,8 +131,13 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const fmt=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return (h?h+':'+String(m).padStart(2,'0'):m)+':'+String(x).padStart(2,'0')};
 const rich=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b class="hy">$1</b>').replace(/__(.+?)__/g,'<u class="hy2">$1</u>');
 const yt=(id,t)=>`https://www.youtube.com/watch?v=${id}${t?`&t=${Math.floor(t)}s`:''}`;
-const embed=(id,t,auto)=>`https://www.youtube-nocookie.com/embed/${id}?enablejsapi=1&rel=0&playsinline=1&modestbranding=1${t?`&start=${Math.floor(t)}`:''}${auto?'&autoplay=1':''}&origin=${encodeURIComponent(location.origin)}`;
 const fcPdf='Peds%20Shelf%20Approach%20Flowcharts%20v2.pdf', diPdf='Divine%20Intervention%20Ep21.pdf';
+const PDFS=[
+ {id:'flowcharts',short:'Approach flowcharts',title:'Peds Shelf Approach Flowcharts v2',file:fcPdf,pages:43,desc:'40 Approach to… flowcharts built from all four sources.'},
+ {id:'emma',short:'Emma Holliday slides',title:'Emma Holliday Pediatrics slides',file:'Emma%20Holliday%20Pediatrics.pdf',pages:78,desc:'The question and answer slides she teaches from in the video.'},
+ {id:'mehlman',short:'Mehlman HY Pediatrics',title:'Mehlman Medical HY Pediatrics',file:'Mehlman%20HY%20Pediatrics.pdf',pages:205,desc:'By system (cardio p4, pulm p11, renal p24, GI p33, heme/onc p52, repro p66, derm p90, neuro p103, psych p109, ophtho p121, MSK p127, biochem p141, endo p146) and a bullet summary from p155.'},
+ {id:'divine',short:'Divine Intervention Ep 21',title:'Divine Intervention Episode 21 PDF',file:diPdf,pages:139,desc:'The 43 questions he reads through in the episode.'},
+];
 
 // sticky header height
 const setH=()=>document.documentElement.style.setProperty('--toph',$('#top').offsetHeight+'px');
@@ -136,7 +145,7 @@ addEventListener('resize',setH);setH();
 
 // rail
 $('#rail').innerHTML=`<div class="lab eyebrow">Videos</div>`+VIDS.map(v=>`<a href="#${v.key}" data-r="${v.key}"><span class="k ${v.key}">${LABEL[v.key]}</span>${esc(v.key==='d'?'Divine Intervention':v.title.replace('High Yield Pediatrics, ','Dr High Yield, ').replace(' Pediatrics Review',''))}</a>`).join('')+
-`<div class="sep"></div><div class="lab eyebrow">Topics</div><a href="#topics" data-r="topics"><span class="k t">40</span>Approach flowcharts</a><a href="${fcPdf}" target="_blank" rel="noopener"><span class="k t">PDF</span>Flowcharts PDF</a><a href="${diPdf}" target="_blank" rel="noopener"><span class="k t">PDF</span>Divine Ep 21 PDF</a>`;
+`<div class="sep"></div><div class="lab eyebrow">Topics</div><a href="#topics" data-r="topics"><span class="k t">40</span>Approach flowcharts</a>`+`<div class="sep"></div><div class="lab eyebrow">PDFs</div>`+PDFS.map(d=>`<a href="#pdf-${d.id}" data-r="pdf-${d.id}"><span class="k t">PDF</span>${esc(d.short)}</a>`).join('')+``;
 
 // timestamp element: button that seeks when embedded, link to YouTube otherwise
 function stamp(key,t,cls,label){
@@ -146,24 +155,32 @@ function stamp(key,t,cls,label){
 }
 
 // ---------- player (GitHub Pages copy) ----------
-let curVid=null;
-function cmd(func,args){const f=$('#ytf');if(f)f.contentWindow.postMessage(JSON.stringify({event:'command',func,args:args||[]}),'*')}
+let curVid=null, ytp=null, ytReady=null;
+function loadAPI(){
+  if(!ytReady) ytReady=new Promise(r=>{window.onYouTubeIframeAPIReady=r;const sc=document.createElement('script');sc.src='https://www.youtube.com/iframe_api';document.head.append(sc)});
+  return ytReady;
+}
+async function startPlayer(t){
+  const key=curVid, v=VID[key];await loadAPI();
+  const fr=$('#player .frame');if(!fr||curVid!==key)return;
+  fr.innerHTML='<div id="ytf"></div>';
+  ytp=new YT.Player('ytf',{videoId:v.id,playerVars:{start:Math.floor(t),autoplay:1,rel:0,playsinline:1,modestbranding:1,hl:'en',cc_lang_pref:'en',cc_load_policy:0,iv_load_policy:3},
+    events:{onReady:e=>{try{e.target.unloadModule('captions');e.target.unloadModule('cc')}catch(_){}e.target.seekTo(Math.floor(t),true);e.target.playVideo()},
+            onApiChange:e=>{try{e.target.unloadModule('captions');e.target.unloadModule('cc')}catch(_){}}}});
+}
 function seek(key,t){
   if(curVid!==key){location.hash=key+'-t'+t;return}
-  const fr=$('#ytf');
-  if(!fr){startPlayer(t,true);}else{cmd('seekTo',[t,true]);cmd('playVideo')}
+  if(ytp&&typeof ytp.seekTo==='function'){ytp.seekTo(t,true);ytp.playVideo()}else{startPlayer(t)}
   markCur(t);
   const p=$('#player');if(p&&p.getBoundingClientRect().top<0)p.scrollIntoView({block:'start'});
 }
-function startPlayer(t,auto){
-  const v=VID[curVid];const fr=$('#player .frame');if(!fr)return;
-  fr.innerHTML=`<iframe id="ytf" title="${esc(v.title)}" src="${embed(v.id,t,auto)}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
-  $('#ytf').addEventListener('load',()=>$('#ytf').contentWindow.postMessage(JSON.stringify({event:'listening',id:'ytf'}),'*'));
-}
 function markCur(t){document.querySelectorAll('.sec').forEach(s=>s.classList.toggle('cur',+s.dataset.t<=t&&+s.dataset.e>t))}
 document.addEventListener('click',e=>{
-  const b=e.target.closest('button[data-t]');if(b){e.preventDefault();seek(b.dataset.v,+b.dataset.t);return}
-  if(e.target.closest('.poster')){startPlayer(+(e.target.closest('.poster').dataset.t||0),true)}
+  const po=e.target.closest('.poster');if(po){e.preventDefault();startPlayer(+(po.dataset.t||0));return}
+  let b=e.target.closest('button[data-v]');
+  if(!b){const sec=e.target.closest('.sec');if(sec&&!e.target.closest('a'))b=sec.querySelector('button[data-v]')}
+  if(b){e.preventDefault();seek(b.dataset.v,+b.dataset.t);return}
+  if(!EMBED){const sec=e.target.closest('.sec');if(sec&&!e.target.closest('a')){const a=sec.querySelector('a.ts');if(a)a.click()}}
 });
 
 // ---------- views ----------
@@ -171,14 +188,15 @@ function home(){
   main.innerHTML=`<section class="hero"><p class="eyebrow">Pediatrics shelf · ${VIDS.reduce((a,v)=>a+v.sections.length,0)} jump points across 4 videos</p><h2>Watch the reviews by topic, not start to finish.</h2>
   <p>Every section has its own timestamp and the high-yield points from that part of the video. Red bold is what to know cold. The 40 Approach flowcharts tie the same topic together across all the videos.</p></section>
   <div class="tiles">${VIDS.map(v=>`<a class="tile" href="#${v.key}"><span class="meta"><span class="k ${v.key} mono" style="padding:1px 6px;border-radius:4px;font-size:11px;font-weight:600">${LABEL[v.key]}</span>${esc(v.who)} · ${fmt(v.len)}</span><span class="tn">${esc(v.title)}</span><span class="muted" style="font-size:13.5px">${v.sections.length} sections${v.approx?' · times approximate':''}</span></a>`).join('')}
-  <a class="tile" href="#topics"><span class="meta"><span class="k t mono" style="padding:1px 6px;border-radius:4px;font-size:11px;font-weight:600">40</span>All sources</span><span class="tn">Approach flowcharts</span><span class="muted" style="font-size:13.5px">Each chart links to the matching moment in every video</span></a></div>
+  <a class="tile" href="#topics"><span class="meta"><span class="k t mono" style="padding:1px 6px;border-radius:4px;font-size:11px;font-weight:600">40</span>All sources</span><span class="tn">Approach flowcharts</span><span class="muted" style="font-size:13.5px">Each chart links to the matching moment in every video</span></a>
+  <a class="tile" href="#pdfs"><span class="meta"><span class="k t mono" style="padding:1px 6px;border-radius:4px;font-size:11px;font-weight:600">PDF</span>4 documents</span><span class="tn">PDFs</span><span class="muted" style="font-size:13.5px">Flowcharts, Emma Holliday slides, Mehlman HY Pediatrics, Divine Intervention Ep 21</span></a></div>
   <div class="how"><p class="eyebrow">How to use it</p>
-  <div><b>Pick a video</b>, then click any timestamp to ${EMBED?'play from that second in the player, which stays pinned while you scroll':'open YouTube at that second in a new tab'}.</div>
+  <div><b>Pick a video</b>, then click any row to ${EMBED?'play from that second in the player, which stays pinned while you scroll':'open YouTube at that second in a new tab'}.</div>
   <div><b>Pick a topic</b> from the flowcharts to see where each video covers it, with the chart underneath.</div>
   <div><b>Divine Intervention</b> has no captions or chapters on YouTube, so its times are estimated from the page of his PDF he is reading and may be off by a minute or two. The PDF page is shown on each section.</div></div>`;
 }
 function video(key,t0){
-  const v=VID[key];curVid=key;
+  const v=VID[key];curVid=key;ytp=null;
   const secs=v.sections.map((s,i)=>({...s,e:(v.sections[i+1]||{t:v.len+1}).t}));
   const related=FC.filter(f=>f.chips[key]&&f.chips[key].length);
   main.innerHTML=`<article class="vhead"><p class="eyebrow">${esc(v.who)}</p><h2>${esc(v.title)}</h2>
@@ -187,7 +205,7 @@ function video(key,t0){
    ${v.approx?`<p class="note">No captions or chapters exist for this upload, so these times are estimated from the PDF page he is on. If a jump lands early or late, nudge by a minute.</p>`:''}
    <div class="secs">${secs.map(s=>`<div class="sec" data-t="${s.t}" data-e="${s.e}">${stamp(key,s.t,'ts')}<div><h3>${esc(s.title)}</h3><ul>${s.notes.map(n=>`<li>${rich(n)}</li>`).join('')}</ul>${s.p?`<div class="pg">PDF page ${s.p} · <a href="${diPdf}#page=${s.p}" target="_blank" rel="noopener">open</a></div>`:''}</div></div>`).join('')}</div>
    ${related.length?`<section style="display:grid;grid-template-columns:minmax(0,1fr);gap:10px"><p class="eyebrow">Flowcharts that cite this video</p><div class="chips">${related.map(f=>`<a class="chip t k" href="#t${f.n}">${f.n} ${esc(f.name.replace(/^Approach to (the )?/,''))}</a>`).join('')}</div></section>`:''}`;
-  if(EMBED&&t0){startPlayer(t0,true);markCur(t0)}
+  if(EMBED&&t0){startPlayer(t0);markCur(t0)}
   scrollTo(0,0);
 }
 function topics(){
@@ -210,6 +228,17 @@ function linkTo(k,t,label){
   if(EMBED) return `<a class="chip ${k}" href="#${k}-t${Math.floor(t)}">${esc(label)}</a>`;
   return `<a class="chip ${k}" href="${yt(VID[k].id,t)}" target="_blank" rel="noopener">${esc(label)}</a>`;
 }
+function pdfs(){
+  main.innerHTML=`<section class="vhead"><p class="eyebrow">Reading</p><h2>PDFs</h2></section>
+  <div class="tiles">${PDFS.map(d=>`<a class="tile" href="#pdf-${d.id}"><span class="meta"><span class="k t mono" style="padding:1px 6px;border-radius:4px;font-size:11px;font-weight:600">PDF</span>${d.pages} pages</span><span class="tn">${esc(d.title)}</span><span class="muted" style="font-size:13.5px">${esc(d.desc)}</span></a>`).join('')}</div>`;
+  scrollTo(0,0);
+}
+function pdf(id){
+  const d=PDFS.find(x=>x.id===id);if(!d)return pdfs();
+  main.innerHTML=`<section class="vhead"><p class="eyebrow"><a href="#pdfs">PDFs</a> · ${d.pages} pages</p><h2>${esc(d.title)}</h2><div class="meta"><span>${esc(d.desc)}</span><a href="${d.file}" target="_blank" rel="noopener">Open in a new tab</a></div></section>
+  ${EMBED?`<iframe class="pdfv" src="${d.file}#view=FitH" title="${esc(d.title)}"></iframe>`:`<a class="tile" href="${d.file}" target="_blank" rel="noopener" style="max-width:420px"><span class="tn">Open ${esc(d.short)}</span><span class="muted" style="font-size:13.5px">Opens the PDF in a new tab.</span></a>`}`;
+  scrollTo(0,0);
+}
 function search(q){
   const terms=q.toLowerCase().split(/\s+/).filter(Boolean);if(!terms.length)return route();
   const hl=s=>{let h=rich(s);terms.forEach(t=>{h=h.replace(new RegExp('('+t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')(?![^<]*>)','gi'),'<mark>$1</mark>')});return h};
@@ -225,6 +254,8 @@ function route(){
   let m;
   if((m=h.match(/^(h1|h2|e|d)(?:-t(\d+))?$/))){r=m[1];video(m[1],m[2]?+m[2]:0)}
   else if(h==='topics'){r='topics';topics()}
+  else if(h==='pdfs'){r='pdfs';curVid=null;pdfs()}
+  else if((m=h.match(/^pdf-([a-z]+)$/))){r='pdf-'+m[1];curVid=null;pdf(m[1])}
   else if((m=h.match(/^t(\d\d)$/))){r='topics';curVid=null;topic(m[1])}
   else {curVid=null;home()}
   const a=document.querySelector(`#rail a[data-r="${r}"]`);if(a)a.classList.add('on');
