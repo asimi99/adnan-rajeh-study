@@ -97,6 +97,7 @@ struct TimeChip: View {
             .padding(.vertical, 3)
             .background(Palette.soft, in: Capsule())
             .foregroundStyle(Palette.accent)
+            .fixedSize()
     }
 }
 
