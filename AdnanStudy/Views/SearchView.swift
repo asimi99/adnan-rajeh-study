@@ -28,9 +28,7 @@ struct SearchView: View {
                         NavigationLink(value: Route.lecture(h.lecture.id, 0)) {
                             VStack(alignment: .leading, spacing: 3) {
                                 Text(h.lecture.title).font(.headline)
-                                Text([h.lecture.s.map { $0 + (h.lecture.ep.map { " · \($0)" } ?? "") }, h.lecture.dateText, h.lecture.durationText]
-                                    .compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "))
-                                    .font(.caption).foregroundStyle(.secondary)
+                                Text(meta(h.lecture)).font(.caption).foregroundStyle(.secondary)
                             }
                         }
                         ForEach(h.moments) { m in
@@ -103,6 +101,14 @@ struct SearchView: View {
             }
             .listRowInsets(EdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12))
         }
+    }
+
+    private func meta(_ l: Lecture) -> String {
+        var parts: [String] = []
+        if let s = l.s { parts.append(l.ep.map { "\(s) · \($0)" } ?? s) }
+        if !l.dateText.isEmpty { parts.append(l.dateText) }
+        if !l.durationText.isEmpty { parts.append(l.durationText) }
+        return parts.joined(separator: " · ")
     }
 
     private func chip(_ id: String, _ name: String) -> some View {
