@@ -65,7 +65,7 @@ struct MyStudyView: View {
         .navigationTitle("My study")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink { SettingsView() } label: { Image(systemName: "gearshape") }
+                NavigationLink(value: Route.settings) { Image(systemName: "gearshape") }
             }
         }
         .sheet(isPresented: $showSignIn) { SignInView() }

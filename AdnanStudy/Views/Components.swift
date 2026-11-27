@@ -25,6 +25,7 @@ enum Route: Hashable {
     case halaqahExercises
     case halaqahExercise(String)
     case years
+    case settings
 }
 
 struct RouteDestinations: ViewModifier {
@@ -36,6 +37,7 @@ struct RouteDestinations: ViewModifier {
             case .category(let c): CategoryView(categoryId: c)
             case .year(let y): YearView(year: y)
             case .years: YearsView()
+            case .settings: SettingsView()
             case .theme(let s): TopicView(slug: s)
             case .themes: ThemesView()
             case .who: WhoView()

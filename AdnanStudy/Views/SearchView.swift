@@ -55,6 +55,11 @@ struct SearchView: View {
         .navigationTitle("Search")
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Patience, tawakkul, صبر…")
         .onSubmit(of: .search) { run() }
+        #if DEBUG
+        .onAppear {
+            if let q = Tour.pendingSearch { Tour.pendingSearch = nil; query = q; run() }
+        }
+        #endif
     }
 
     @ViewBuilder
