@@ -85,7 +85,7 @@ struct YouTubePlayerView: UIViewRepresentable {
         function post(type,a,b){try{window.webkit.messageHandlers.yt.postMessage({type:type,a:a,b:b})}catch(e){}}
         function onYouTubeIframeAPIReady(){
           player=new YT.Player('p',{host:'https://www.youtube-nocookie.com',videoId:'\(videoId)',
-            playerVars:{playsinline:1,rel:0,modestbranding:1,start:\(Int(start)),autoplay:\(start > 0 ? 1 : 0)},
+            playerVars:{playsinline:1,rel:0,modestbranding:1,origin:'https://asimi99.github.io',widget_referrer:'https://asimi99.github.io/adnan-rajeh-study/',start:\(Int(start)),autoplay:\(start > 0 ? 1 : 0)},
             events:{onReady:function(){post('ready')},onStateChange:function(e){post('state',e.data)},onError:function(e){post('error',e.data)}}});
           setInterval(function(){if(player&&player.getCurrentTime){post('time',player.getCurrentTime(),player.getDuration())}},1000);
         }

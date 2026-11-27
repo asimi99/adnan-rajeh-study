@@ -24,6 +24,15 @@ struct HomeView: View {
                 }
             }
 
+            let fresh = Array(lib.own.filter { $0.tx ?? false }.prefix(6))
+            if !fresh.isEmpty {
+                Section("Latest") {
+                    ForEach(fresh) { l in
+                        NavigationLink(value: Route.lecture(l.id, 0)) { LectureRow(lecture: l) }
+                    }
+                }
+            }
+
             Section("Study by subject") {
                 NavigationLink(value: Route.themes) {
                     VStack(alignment: .leading, spacing: 4) {

@@ -333,8 +333,11 @@ struct MiniPlayer: View {
                 }
                 .buttonStyle(.plain)
                 Button { player.skip(-15) } label: { Image(systemName: "gobackward.15") }
+                    .accessibilityLabel("Back 15 seconds")
                 Button { player.toggle() } label: { Image(systemName: player.isPlaying ? "pause.fill" : "play.fill").font(.title3) }
+                    .accessibilityLabel(player.isPlaying ? "Pause" : "Play")
                 Button { player.stop() } label: { Image(systemName: "xmark") }
+                    .accessibilityLabel("Stop")
             }
             .tint(Palette.accent)
             .padding(.horizontal, 14)

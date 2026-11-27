@@ -7,6 +7,7 @@ struct SearchView: View {
     @State private var searching = false
     @State private var filter = "all"
     @State private var lastQuery = ""
+    @State private var recent: [String] = UserDefaults.standard.stringArray(forKey: "recentSearches") ?? []
 
     var body: some View {
         List {
@@ -50,9 +51,26 @@ struct SearchView: View {
                     Text("Search every word he has said across the transcribed lectures, in English or Arabic. Each result opens the lecture at that moment.")
                         .font(.callout).foregroundStyle(.secondary)
                 }
+                if !recent.isEmpty {
+                    Section {
+                        ForEach(recent, id: \.self) { r in
+                            Button { query = r; run() } label: {
+                                Label(r, systemImage: "clock.arrow.circlepath").foregroundStyle(.primary)
+                            }
+                        }
+                    } header: {
+                        HStack {
+                            Text("Recent")
+                            Spacer()
+                            Button("Clear") { recent = []; UserDefaults.standard.removeObject(forKey: "recentSearches") }
+                                .font(.caption)
+                        }
+                    }
+                }
             }
         }
         .navigationTitle("Search")
+        .onChange(of: query) { _, v in if v.isEmpty { result = nil } }
         .searchable(text: $query, placement: .navigationBarDrawer(displayMode: .always), prompt: "Patience, tawakkul, صبر…")
         .onSubmit(of: .search) { run() }
         #if DEBUG
@@ -95,6 +113,10 @@ struct SearchView: View {
         let q = query.trimmingCharacters(in: .whitespaces)
         guard !q.isEmpty else { return }
         lastQuery = q
+        recent.removeAll { $0.lowercased() == q.lowercased() }
+        recent.insert(q, at: 0)
+        recent = Array(recent.prefix(8))
+        UserDefaults.standard.set(recent, forKey: "recentSearches")
         filter = "all"
         searching = true
         Task {

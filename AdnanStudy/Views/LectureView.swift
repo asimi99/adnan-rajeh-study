@@ -24,6 +24,7 @@ struct LectureView: View {
     @State private var remindAt = Date().addingTimeInterval(60 * 60 * 3)
     @State private var remindStatus: String?
     @State private var activeT: Double?
+    @State private var showTranscript = false
 
     private var lecture: Lecture? { lib.byId[id] }
 
@@ -54,10 +55,20 @@ struct LectureView: View {
                     mainContent(for: l)
                 }
                 .padding(16)
+                .frame(maxWidth: 760)
+                .frame(maxWidth: .infinity)
             }
             .scrollDismissesKeyboard(.interactively)
         }
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button { store.toggleSaved(id) } label: {
+                    Image(systemName: store.isSaved(id) ? "bookmark.fill" : "bookmark")
+                }
+                .accessibilityLabel(store.isSaved(id) ? "Remove from saved" : "Save lecture")
+            }
+        }
         .task { await load(l) }
         .onAppear {
             reflection = store.reflection(id)
@@ -73,6 +84,13 @@ struct LectureView: View {
             player.pause()
         }
         .sheet(isPresented: $showRemind) { remindSheet(l) }
+        .sheet(isPresented: $showTranscript) {
+            TranscriptSheet(paragraphs: record?.p ?? [], activeT: player.current) { t in
+                activeT = t
+                player.seek(t)
+                showTranscript = false
+            }
+        }
     }
 
     private func load(_ l: Lecture) async {
@@ -177,7 +195,60 @@ struct LectureView: View {
             reflectionSection
             if let ch = record?.ch?.filter({ $0.t >= 0 }), !ch.isEmpty { chaptersSection(ch) }
             findSection
+            if let r = record, !r.p.isEmpty {
+                Button { showTranscript = true } label: {
+                    Label("Read the full transcript", systemImage: "text.alignleft")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .tint(Palette.accent)
+            }
         }
+        upNext(l)
+    }
+
+    @ViewBuilder
+    private func upNext(_ l: Lecture) -> some View {
+        if let g = lib.series(for: l) {
+            let list = g.ordered
+            if let i = list.firstIndex(where: { $0.id == l.id }) {
+                let prev = i > 0 ? list[i - 1] : nil
+                let next = i + 1 < list.count ? list[i + 1] : nil
+                if prev != nil || next != nil {
+                    VStack(alignment: .leading, spacing: 8) {
+                        SectionTitle(text: "In this series")
+                        if let next {
+                            NavigationLink(value: Route.lecture(next.id, 0)) {
+                                seriesNeighbour("Next", next)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        if let prev {
+                            NavigationLink(value: Route.lecture(prev.id, 0)) {
+                                seriesNeighbour("Previous", prev)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private func seriesNeighbour(_ label: String, _ x: Lecture) -> some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(label.uppercased()).font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
+                Text(x.title).font(.subheadline.weight(.semibold)).multilineTextAlignment(.leading)
+                if let p = store.progress(x.id), p.d > 0 {
+                    ProgressView(value: p.percent).tint(Palette.accent)
+                }
+            }
+            Spacer(minLength: 0)
+            Image(systemName: "chevron.right").foregroundStyle(.tertiary)
+        }
+        .padding(12)
+        .background(Palette.surface, in: RoundedRectangle(cornerRadius: 12))
     }
 
     private func jump(_ t: Double) -> some View {
@@ -473,5 +544,53 @@ struct HighlightedText: View {
             }
         }
         return a
+    }
+}
+
+/// The whole transcript, tap a paragraph to jump there.
+struct TranscriptSheet: View {
+    let paragraphs: [TimedText]
+    let activeT: Double
+    var onJump: (Double) -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var filter = ""
+
+    private var shown: [TimedText] {
+        let q = filter.trimmingCharacters(in: .whitespaces).lowercased()
+        return q.isEmpty ? paragraphs : paragraphs.filter { $0.text.lowercased().contains(q) }
+    }
+
+    private var currentIndex: Int? {
+        paragraphs.lastIndex { $0.t <= activeT }
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollViewReader { proxy in
+                List {
+                    ForEach(Array(shown.enumerated()), id: \.offset) { _, p in
+                        Button { onJump(p.t) } label: {
+                            HStack(alignment: .top, spacing: 10) {
+                                TimeChip(t: p.t)
+                                Text(p.text)
+                                    .font(Fmt.isArabic(p.text) ? .arabic(18) : .callout)
+                                    .multilineTextAlignment(Fmt.isArabic(p.text) ? .trailing : .leading)
+                                    .frame(maxWidth: .infinity, alignment: Fmt.isArabic(p.text) ? .trailing : .leading)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .id(p.t)
+                    }
+                }
+                .listStyle(.plain)
+                .onAppear {
+                    if let i = currentIndex, filter.isEmpty { proxy.scrollTo(paragraphs[i].t, anchor: .top) }
+                }
+            }
+            .searchable(text: $filter, prompt: "Find in transcript")
+            .navigationTitle("Transcript")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+        }
     }
 }

@@ -120,6 +120,17 @@ final class UserStore {
         return out.sorted { $0.progress.at > $1.progress.at }
     }
 
+    // MARK: saved lectures (kept on this phone)
+
+    private(set) var saved: [String] = UserDefaults.standard.stringArray(forKey: "saved") ?? []
+
+    func isSaved(_ id: String) -> Bool { saved.contains(id) }
+
+    func toggleSaved(_ id: String) {
+        if let i = saved.firstIndex(of: id) { saved.remove(at: i) } else { saved.insert(id, at: 0) }
+        UserDefaults.standard.set(saved, forKey: "saved")
+    }
+
     // MARK: reflections
 
     func reflection(_ id: String) -> String { data.notes[id]?.text ?? "" }

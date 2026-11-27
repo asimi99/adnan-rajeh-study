@@ -31,6 +31,16 @@ struct MyStudyView: View {
                 }
             }
 
+            let saved = store.saved.compactMap { lib.byId[$0] }
+            if !saved.isEmpty {
+                Section("Saved") {
+                    ForEach(saved) { l in
+                        NavigationLink(value: Route.lecture(l.id, 0)) { LectureRow(lecture: l, progress: store.progress(l.id)) }
+                            .swipeActions { Button("Remove", role: .destructive) { store.toggleSaved(l.id) } }
+                    }
+                }
+            }
+
             Section {
                 let notes = store.reflections.filter { lib.byId[$0.id] != nil }
                 if notes.isEmpty {
